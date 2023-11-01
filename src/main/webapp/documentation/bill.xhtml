@@ -24,8 +24,8 @@
                 <p:outputLabel for="telefono" value="Telefono:"/>
                 <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
                 
-                <p:outputLabel for="telefono" value="Telefono:"/>
-                <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
+                <p:outputLabel for="total" value="Telefono:"/>
+                <p:inputText id="total" value="#{billController.bill.total}"/>
             </p:panelGrid>
 
 
@@ -38,10 +38,10 @@
 					<p:column headerText="Fecha">
 						<p:cellEditor>
 							<f:facet name="output">
-								<h:outputText value="#{detalle.unidades}" />
+								<h:outputText value="#{detalle.fecha}" />
 							</f:facet>
 							<f:facet name="input">
-								<p:inputText id="unidadesId" value="#{detalle.unidades}"
+								<p:inputText id="fechaId" value="#{detalle.fecha}"
 									style="width:100%" />
 							</f:facet>
 						</p:cellEditor>
@@ -79,8 +79,6 @@
 					<p:column id="cellValorTotalId" headerText="Valor Total">
 						<h:outputText value="#{detalle.total}" />
 					</p:column>
-					
-					
 
 				</p:dataTable>
 			</div>
@@ -121,5 +119,53 @@
         clear: 'Claro'
     };
     </script>
+    
+    
+    <p:dialog header="Product Details" showEffect="fade" modal="true" widgetVar="manageProductDialog"
+            responsive="true">
+            <p:panelGrid columns="4"
+                             columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                             layout="grid"
+                             styleClass="ui-panelgrid-blank ui-fluid"
+                             style="border:0px none; background-color:transparent;"
+                             >
+                    <br/>
+                    <p:row styleClass="my-heading-row">
+                        Calculadora de puntadas
+                    </p:row>
+                    <p:outputLabel for="@next" value="Diseño" />
+                    <p:inputTextarea id="disenioId" rows="3" />
+
+                    <p:outputLabel for="@next" value="Puntadas"/>
+                    <p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" />
+
+                    <p:outputLabel for="@next" value="Valor Unitario"/>
+                    <p:inputNumber id="valorUnitarioId"
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:outputLabel for="@next" value="Total"/>
+                    <p:inputNumber id="totalId"  disabled="true"
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:outputLabel for="@next" value="Valor Final"/>
+                    <p:inputNumber id="valorFinalId" 
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:row>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Calcular" styleClass="ui-button-success"
+                                               />
+                        </p:column>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Enviar a Factura" styleClass="ui-button-help"
+                             />
+                        </p:column>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Limpiar" styleClass="ui-button-danger"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+        </p:dialog>
+        
     </ui:define>
 </ui:composition>
