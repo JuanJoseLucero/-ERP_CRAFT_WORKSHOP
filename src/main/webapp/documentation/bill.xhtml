@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../dashboard.xhtml">
+
+    <h1>Calculadora de puntadas</h1>
+    <ui:define name="content">
+    	<h:form id="billForm">
+            <p:panelGrid columns="4" styleClass="panel-grid">
+                <p:outputLabel for="identificacion" value="Identificación:"/>
+                <p:inputText id="identificacion" value="#{billController.bill.identificacion}"/>
+
+                <p:outputLabel for="nombres" value="Nombres:"/>
+                <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
+
+                <p:outputLabel for="fecha" value="Fecha Inicio:"/>
+                <p:datePicker id="fecha" value="#{billController.bill.fecha}"  mode="inline"/>
+
+                <p:outputLabel for="direccion" value="Dirección:"/>
+                <p:inputText id="direccion" value="#{billController.bill.direccion}"/>
+                
+                <p:outputLabel for="telefono" value="Telefono:"/>
+                <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
+                
+                <p:outputLabel for="telefono" value="Telefono:"/>
+                <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
+            </p:panelGrid>
+
+
+			<div class="card">
+				<h5>Detalle de factura</h5>
+				<p:dataTable id="detalleFacturaId" var="detalle"
+					value="#{billController.bill.lstDetailBill}" editable="true"
+					editMode="cell" >
+
+					<p:column headerText="Fecha">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{detalle.unidades}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="unidadesId" value="#{detalle.unidades}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Unidades">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{detalle.unidades}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="unidadesId" value="#{detalle.unidades}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Detalle">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{detalle.descripcion}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="descripcionId" value="#{detalle.descripcion}"
+									style="width:100%" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					
+					<p:column headerText="Valor Unitario">
+					<h:outputText value="#{detalle.valorUnitario}" />
+					</p:column>
+					
+					
+					<p:column id="cellValorTotalId" headerText="Valor Total">
+						<h:outputText value="#{detalle.total}" />
+					</p:column>
+					
+					
+
+				</p:dataTable>
+			</div>
+			<br />
+			<p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Guardar" actionListener="#{billController.eliminar}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
+			
+		</h:form>
+        <script>
+    PrimeFaces.locales['es'] = {
+        closeText: 'Cerrar',
+        prevText: 'Anterior',
+        nextText: 'Siguiente',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+        dayNamesMin: ['D', 'L', 'M', 'X', 'J', 'V', 'S'],
+        weekHeader: 'Semana',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: '',
+        timeOnlyTitle: 'Sólo hora',
+        timeText: 'Tiempo',
+        hourText: 'Hora',
+        minuteText: 'Minuto',
+        secondText: 'Segundo',
+        millisecondText: 'Milisegundo',
+        currentText: 'Fecha actual',
+        ampm: false,
+        month: 'Mes',
+        week: 'Semana',
+        day: 'Día',
+        allDayText: 'Todo el día',
+        today: 'Hoy',
+        clear: 'Claro'
+    };
+    </script>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="../dashboard.xhtml">
+    <ui:define name="content">
+        <h:form enctype="multipart/form-data" id="frmCalculator">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="card">
+                <style>
+                    .ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell {
+                        text-align: center;
+                    }
+
+                    .customPanelGrid .ui-panelgrid-content {
+                        align-items: center;
+                    }
+
+                </style>
+                <style>
+                /* reset on the showcase style*/
+                body .ui-panelgrid .ui-panelgrid-cell {
+                    background-color: transparent;
+                }
+
+                /* example use of styles for your form */
+                .my-heading-row {
+                    background-color: var(--surface-c);
+                    font-weight: bold;
+                }
+
+                </style>
+
+                <p:panelGrid columns="4"
+                             columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                             layout="grid"
+                             styleClass="ui-panelgrid-blank ui-fluid"
+                             style="border:0px none; background-color:transparent;"
+                             >
+                    <br/>
+                    <p:row styleClass="my-heading-row">
+                        Calculadora de puntadas
+                    </p:row>
+                    <p:outputLabel for="@next" value="Diseño" />
+                    <p:inputTextarea id="disenioId" rows="3" value="#{calculatorController.calculator.diseño}"/>
+
+                    <p:outputLabel for="@next" value="Puntadas"/>
+                    <p:inputNumber id="puntadasId" value="#{calculatorController.calculator.puntadas}" minValue="1" decimalPlaces="0" />
+
+                    <p:outputLabel for="@next" value="Valor Unitario"/>
+                    <p:inputNumber id="valorUnitarioId" value="#{calculatorController.calculator.valorUnitario}"
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:outputLabel for="@next" value="Total"/>
+                    <p:inputNumber id="totalId" value="#{calculatorController.calculator.total}" disabled="true"
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:outputLabel for="@next" value="Valor Final"/>
+                    <p:inputNumber id="valorFinalId" value="#{calculatorController.calculator.valorFinal}"
+                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+
+                    <p:row>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Calcular" styleClass="ui-button-success"
+                                             actionListener="#{calculatorController.getCalculatedValues}" update="growl frmCalculator" />
+                        </p:column>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Enviar a Factura" styleClass="ui-button-help"
+                             actionListener="#{calculatorController.generateBill}"/>
+                        </p:column>
+                        <p:column styleClass="ui-grid-col-4">
+                            <p:commandButton value="Limpiar" styleClass="ui-button-danger"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
