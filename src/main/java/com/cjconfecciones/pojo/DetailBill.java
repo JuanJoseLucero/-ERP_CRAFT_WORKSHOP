@@ -10,6 +10,8 @@ public class DetailBill {
 	private BigDecimal valorUnitario;
 	private BigDecimal total;
 	private Date fecha;
+	private BigDecimal puntadas;
+	private BigDecimal valorFinal;
 	
 	public BigDecimal getUnidades() {
 		return unidades;
@@ -41,7 +43,16 @@ public class DetailBill {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	
-	
-
+	public BigDecimal getPuntadas() {
+		return puntadas;
+	}
+	public void setPuntadas(BigDecimal puntadas) {
+		this.puntadas = puntadas;
+	}
+	public BigDecimal getValorFinal() {
+		return valorFinal;
+	}
+	public void setValorFinal(BigDecimal valorFinal) {
+		this.valorFinal = valorFinal;
+	}
 }

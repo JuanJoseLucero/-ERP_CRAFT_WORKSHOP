@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 
 import com.cjconfecciones.pojo.Bill;
@@ -18,6 +19,8 @@ import com.cjconfecciones.pojo.DetailBill;
 import com.cjconfecciones.utils.GenerateReport;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -34,10 +37,12 @@ public class BillController implements Serializable {
 	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
-	DetailBill detail = new DetailBill();
+	private DetailBill detailSelected;
+	private Boolean editMode = false;
 	
 	@PostConstruct	
 	private void init() {
+		/*
 		log.info("Se procede a iniciarlizqr el bin de billcontroller");
 		
 		detail.setDescripcion(sessionController.getCalculator().getDiseño());
@@ -48,8 +53,43 @@ public class BillController implements Serializable {
 		bill.setLstDetailBill(lstDetailBill);
 		log.info("temino el flujo");
 		log.info(bill.getLstDetailBill().get(0).getDescripcion());
-		//PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
+		*/
 	}
+	
+	public void newDetail() {
+		this.editMode =false;
+		detailSelected = new DetailBill();
+	}
+	
+	public void editModeTrue() {
+		this.editMode = true;
+	}
+	
+	public void getCalculatedValues(){
+        try{
+            log.info("entro a get calculator valores");
+            //if(validationsFields()){
+                this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
+                //this.detailSelected.setValorFinal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")));
+                //log.info(this.calculator.getTotal()+"");
+            //}
+        }catch (Exception e){
+            log.log(Level.SEVERE, "ERROR TO CALCULATED VALUES ",e);
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Intente nuevamente"));
+        }
+    }
+	
+	public void saveProduct() {
+		if (!editMode) {
+			detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			detailSelected.setFecha(new Date());
+			this.bill.getLstDetailBill().add(detailSelected);
+		}
+			PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
+			PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
+	}
+	
 	
 	
 	public void calcular() {
@@ -136,6 +176,13 @@ public class BillController implements Serializable {
 	public void setBill(Bill bill) {
 		this.bill = bill;
 	}
-	
-	
+
+	public DetailBill getDetailSelected() {
+		return detailSelected;
+	}
+
+	public void setDetailSelected(DetailBill detailSelected) {
+		this.detailSelected = detailSelected;
+	}
+
 }

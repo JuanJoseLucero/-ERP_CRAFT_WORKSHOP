@@ -24,69 +24,56 @@
                 <p:outputLabel for="telefono" value="Telefono:"/>
                 <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
                 
-                <p:outputLabel for="total" value="Telefono:"/>
+                <p:outputLabel for="total" value="Total"/>
                 <p:inputText id="total" value="#{billController.bill.total}"/>
             </p:panelGrid>
-
+            
+            <p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}" oncomplete="PF('manageProductDialog').show()" update="dialogs"></p:commandButton>
+            <p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Guardar" actionListener="#{billController.eliminar}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
 
 			<div class="card">
 				<h5>Detalle de factura</h5>
 				<p:dataTable id="detalleFacturaId" var="detalle"
-					value="#{billController.bill.lstDetailBill}" editable="true"
-					editMode="cell" >
+					value="#{billController.bill.lstDetailBill}">
 
 					<p:column headerText="Fecha">
-						<p:cellEditor>
-							<f:facet name="output">
-								<h:outputText value="#{detalle.fecha}" />
-							</f:facet>
-							<f:facet name="input">
-								<p:inputText id="fechaId" value="#{detalle.fecha}"
-									style="width:100%" />
-							</f:facet>
-						</p:cellEditor>
+						<h:outputText value="#{detalle.fecha}" />
 					</p:column>
 					
 					<p:column headerText="Unidades">
-						<p:cellEditor>
-							<f:facet name="output">
-								<h:outputText value="#{detalle.unidades}" />
-							</f:facet>
-							<f:facet name="input">
-								<p:inputText id="unidadesId" value="#{detalle.unidades}"
-									style="width:100%" />
-							</f:facet>
-						</p:cellEditor>
+						<h:outputText value="#{detalle.unidades}" />
 					</p:column>
 					
 					<p:column headerText="Detalle">
-						<p:cellEditor>
-							<f:facet name="output">
-								<h:outputText value="#{detalle.descripcion}" />
-							</f:facet>
-							<f:facet name="input">
-								<p:inputText id="descripcionId" value="#{detalle.descripcion}"
-									style="width:100%" />
-							</f:facet>
-						</p:cellEditor>
+						<h:outputText value="#{detalle.descripcion}" />
 					</p:column>
 					
 					<p:column headerText="Valor Unitario">
-					<h:outputText value="#{detalle.valorUnitario}" />
+						<h:outputText value="#{detalle.valorFinal}" />
 					</p:column>
-					
 					
 					<p:column id="cellValorTotalId" headerText="Valor Total">
 						<h:outputText value="#{detalle.total}" />
 					</p:column>
 
+					<p:column exportable="false">
+						<p:commandButton icon="pi pi-pencil"
+							update=":dialogs:panel"
+							oncomplete="PF('manageProductDialog').show()"
+							styleClass="edit-button rounded-button ui-button-success"
+							actionListener="#{billController.editModeTrue}"
+							process="@this">
+							<f:setPropertyActionListener value="#{product}"
+								target="#{crudView.selectedProduct}" />
+							<p:resetInput target=":dialogs:panel" />
+						</p:commandButton>
+					</p:column>
+
 				</p:dataTable>
 			</div>
 			<br />
-			<p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Guardar" actionListener="#{billController.eliminar}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
-			
 		</h:form>
         <script>
     PrimeFaces.locales['es'] = {
@@ -119,53 +106,59 @@
         clear: 'Claro'
     };
     </script>
-    
-    
-    <p:dialog header="Product Details" showEffect="fade" modal="true" widgetVar="manageProductDialog"
-            responsive="true">
-            <p:panelGrid columns="4"
-                             columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-                             layout="grid"
-                             styleClass="ui-panelgrid-blank ui-fluid"
-                             style="border:0px none; background-color:transparent;"
-                             >
-                    <br/>
-                    <p:row styleClass="my-heading-row">
-                        Calculadora de puntadas
-                    </p:row>
-                    <p:outputLabel for="@next" value="Diseño" />
-                    <p:inputTextarea id="disenioId" rows="3" />
 
-                    <p:outputLabel for="@next" value="Puntadas"/>
-                    <p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" />
+		<h:form id="dialogs">
+			<p:dialog header="Calculadora de puntadas" showEffect="fade"
+				modal="true" widgetVar="manageProductDialog" responsive="true">
+				<p:panelGrid columns="4" id="panel"
+					columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+					style="border:0px none; background-color:transparent;">
 
-                    <p:outputLabel for="@next" value="Valor Unitario"/>
-                    <p:inputNumber id="valorUnitarioId"
-                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+					<p:outputLabel for="@next" value="Diseño" />
+					<p:inputTextarea id="disenioId" rows="3"
+						value="#{billController.detailSelected.descripcion}" />
 
-                    <p:outputLabel for="@next" value="Total"/>
-                    <p:inputNumber id="totalId"  disabled="true"
-                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+					<p:outputLabel for="@next" value="Puntadas" />
+					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0"
+						value="#{billController.detailSelected.puntadas}" />
 
-                    <p:outputLabel for="@next" value="Valor Final"/>
-                    <p:inputNumber id="valorFinalId" 
-                                   symbolPosition="s" decimalPlaces="2" decimalSeparator="." thousandSeparator="," />
+					<p:outputLabel for="@next" value="Valor Unitario" />
+					<p:inputNumber id="valorUnitarioId" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.valorUnitario}" />
 
-                    <p:row>
-                        <p:column styleClass="ui-grid-col-4">
-                            <p:commandButton value="Calcular" styleClass="ui-button-success"
-                                               />
-                        </p:column>
-                        <p:column styleClass="ui-grid-col-4">
-                            <p:commandButton value="Enviar a Factura" styleClass="ui-button-help"
-                             />
-                        </p:column>
-                        <p:column styleClass="ui-grid-col-4">
-                            <p:commandButton value="Limpiar" styleClass="ui-button-danger"/>
-                        </p:column>
-                    </p:row>
-                </p:panelGrid>
-        </p:dialog>
-        
-    </ui:define>
+					<p:outputLabel for="@next" value="Total" />
+					<p:inputNumber id="totalId" disabled="true" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.total}" />
+
+					<p:outputLabel for="@next" value="Valor Final" />
+					<p:inputNumber id="valorFinalId" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.valorFinal}" />
+						
+					<p:outputLabel for="@next" value="Valor Final" />
+					<p:inputNumber id="unidades" symbolPosition="s"
+						decimalPlaces="0" 
+						value="#{billController.detailSelected.unidades}" />
+
+					<p:row>
+						<p:column styleClass="ui-grid-col-4">
+							<p:commandButton value="Calcular" styleClass="ui-button-success" 
+							actionListener="#{billController.getCalculatedValues}" update = "dialogs:totalId"/>
+						</p:column>
+						<p:column styleClass="ui-grid-col-4">
+							<p:commandButton value="Enviar a Factura" 
+								styleClass="ui-button-help" actionListener="#{billController.saveProduct}"/>
+						</p:column>
+						<p:column styleClass="ui-grid-col-4">
+							<p:commandButton value="Limpiar" styleClass="ui-button-danger" />
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+			</p:dialog>
+		</h:form>
+
+	</ui:define>
 </ui:composition>
