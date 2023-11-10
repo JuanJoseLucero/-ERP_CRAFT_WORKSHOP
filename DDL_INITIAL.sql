@@ -1,14 +1,19 @@
--- Crear la tabla TCLIENTE
-CREATE TABLE TCLIENTE (
-    id serial PRIMARY KEY,
+
+--Crear la tabla TPERSONA
+create table TPERSONA(
+    cedula varchar (10) primary key,
     nombre varchar(255),
     apellido varchar(255),
-    Telefono varchar(255),
+    telefono varchar(255),
     direccion varchar(255)
 );
 
 
-
+-- Crear la tabla TCLIENTE
+CREATE TABLE TCLIENTE (
+    id serial PRIMARY KEY,
+    idpersona varchar(10)
+);
 
 
 -- Crear la tabla TPEDIDOCABECERA
@@ -19,9 +24,6 @@ CREATE TABLE TPEDIDOCABECERA (
     ESTADO varchar(255),
     ccliente integer
 );
-
-
-
 
 
 -- Crear la tabla TPEDIDODETALLE
@@ -36,7 +38,10 @@ CREATE TABLE TPEDIDODETALLE (
 );
 
 
-
+ALTER TABLE cjconfecciones.tcliente
+ADD CONSTRAINT fk_id_persona
+FOREIGN KEY (idpersona)
+REFERENCES tpersona (cedula);
 
 ALTER TABLE TPEDIDOCABECERA
 ADD CONSTRAINT fk_ccliente
