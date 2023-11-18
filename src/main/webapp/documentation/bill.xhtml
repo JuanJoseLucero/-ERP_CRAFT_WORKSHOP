@@ -30,7 +30,7 @@
             
             <p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}" oncomplete="PF('manageProductDialog').show()" update="dialogs"></p:commandButton>
             <p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Guardar" actionListener="#{billController.eliminar}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Guardar" actionListener="#{billController.per	sistWorkOrder}" update="billForm:detalleFacturaId"></p:commandButton>
 			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
 
 			<div class="card">

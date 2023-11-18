@@ -16,6 +16,7 @@ import org.primefaces.event.CellEditEvent;
 
 import com.cjconfecciones.pojo.Bill;
 import com.cjconfecciones.pojo.DetailBill;
+import com.cjconfecciones.utils.ApiRestClient;
 import com.cjconfecciones.utils.GenerateReport;
 
 import jakarta.annotation.PostConstruct;
@@ -34,6 +35,9 @@ public class BillController implements Serializable {
 	
 	@Inject 
 	private GenerateReport generateReport;
+	
+	@Inject
+	private ApiRestClient apiRestClient;
 	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
@@ -54,6 +58,11 @@ public class BillController implements Serializable {
 		log.info("temino el flujo");
 		log.info(bill.getLstDetailBill().get(0).getDescripcion());
 		*/
+	}
+	
+	public void persistWorkOrder() {
+		apiRestClient.consumeWebServices(String.class);
+		
 	}
 	
 	public void newDetail() {
