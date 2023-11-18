@@ -16,7 +16,7 @@
                 <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
 
                 <p:outputLabel for="fecha" value="Fecha Inicio:"/>
-                <p:datePicker id="fecha" value="#{billController.bill.fecha}"  mode="inline"/>
+                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline"/>
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
                 <p:inputText id="direccion" value="#{billController.bill.direccion}"/>
@@ -30,7 +30,7 @@
             
             <p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}" oncomplete="PF('manageProductDialog').show()" update="dialogs"></p:commandButton>
             <p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Guardar" actionListener="#{billController.per	sistWorkOrder}" update="billForm:detalleFacturaId"></p:commandButton>
+			<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}" update="billForm:detalleFacturaId"></p:commandButton>
 			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
 
 			<div class="card">

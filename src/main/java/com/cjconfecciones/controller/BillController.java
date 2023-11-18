@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.cjconfecciones.pojo.ResponseCJ;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 
@@ -18,6 +19,7 @@ import com.cjconfecciones.pojo.Bill;
 import com.cjconfecciones.pojo.DetailBill;
 import com.cjconfecciones.utils.ApiRestClient;
 import com.cjconfecciones.utils.GenerateReport;
+import com.cjconfecciones.utils.Util;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.faces.application.FacesMessage;
@@ -39,6 +41,9 @@ public class BillController implements Serializable {
 	@Inject
 	private ApiRestClient apiRestClient;
 	
+	@Inject
+	private Util util;
+	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
 	private DetailBill detailSelected;
@@ -46,23 +51,19 @@ public class BillController implements Serializable {
 	
 	@PostConstruct	
 	private void init() {
-		/*
-		log.info("Se procede a iniciarlizqr el bin de billcontroller");
-		
-		detail.setDescripcion(sessionController.getCalculator().getDiseño());
-		detail.setValorUnitario(sessionController.getCalculator().getValorFinal());
-		detail.setTotal(BigDecimal.ZERO);
-		List<DetailBill> lstDetailBill = new ArrayList<DetailBill>();
-		lstDetailBill.add(detail);
-		bill.setLstDetailBill(lstDetailBill);
-		log.info("temino el flujo");
-		log.info(bill.getLstDetailBill().get(0).getDescripcion());
-		*/
 	}
 	
 	public void persistWorkOrder() {
-		apiRestClient.consumeWebServices(String.class);
-		
+		String objecto = util.converterJson(bill);
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		bill.setFecha(formatter.format(bill.getFechaDate()));
+		log.info("objecto " .concat(objecto));
+		ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "/order/new",util.converterJson(bill));
+		if(responseWS.getError().equals("0")){
+			log.info("OK");
+		}else{
+			log.info("ERROR");
+		}
 	}
 	
 	public void newDetail() {

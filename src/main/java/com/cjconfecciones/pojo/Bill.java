@@ -18,7 +18,8 @@ import lombok.Setter;
 public class Bill {
 	private String identificacion;
 	private String nombres;
-	private Date fecha;
+	private Date fechaDate;
+	private String fecha;
 	private String direccion;
 	private String telefono;
 	private BigDecimal total;
