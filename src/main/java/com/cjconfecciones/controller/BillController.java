@@ -53,12 +53,20 @@ public class BillController implements Serializable {
 	private void init() {
 	}
 	
+	public void  searchClient() {
+		log.info("objecto " .concat(util.converterJson(bill)));
+		Bill responseWS =  apiRestClient.consumeWebServices(Bill.class, "order/searchClient",util.converterJson(bill));
+		//log.info(responseWS.getNombres());
+		//this.bill.setDireccion(responseWS.getDireccion());
+		this.bill = responseWS;
+	}
+	
 	public void persistWorkOrder() {
 		String objecto = util.converterJson(bill);
 		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		bill.setFecha(formatter.format(bill.getFechaDate()));
 		log.info("objecto " .concat(objecto));
-		ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "/order/new",util.converterJson(bill));
+		ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
 		if(responseWS.getError().equals("0")){
 			log.info("OK");
 			this.generateBill();

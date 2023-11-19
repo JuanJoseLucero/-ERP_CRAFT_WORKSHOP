@@ -8,9 +8,9 @@
     <h1>Calculadora de puntadas</h1>
     <ui:define name="content">
     	<h:form id="billForm">
-            <p:panelGrid columns="4" styleClass="panel-grid">
+            <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
                 <p:outputLabel for="identificacion" value="Identificación:"/>
-                <p:inputText id="identificacion" value="#{billController.bill.identificacion}"/>
+                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()"/>
 
                 <p:outputLabel for="nombres" value="Nombres:"/>
                 <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
@@ -86,6 +86,7 @@
 				</p:dataTable>
 			</div>
 			<br />
+			<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}" process="@this, billForm:identificacion" update="billForm:headerBill"/>
 		</h:form>
         <script>
     PrimeFaces.locales['es'] = {
@@ -170,6 +171,7 @@
 					</p:row>
 				</p:panelGrid>
 			</p:dialog>
+			
 		</h:form>
 
 	</ui:define>
