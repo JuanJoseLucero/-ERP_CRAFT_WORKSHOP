@@ -27,12 +27,24 @@
                 <p:outputLabel for="total" value="Total"/>
                 <p:inputText id="total" value="#{billController.bill.total}"/>
             </p:panelGrid>
-            
-            <p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}" oncomplete="PF('manageProductDialog').show()" update="dialogs"></p:commandButton>
-            <p:commandButton value="Calcular total" actionListener="#{billController.calcular}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}" update="billForm:detalleFacturaId"></p:commandButton>
-			<p:commandButton value="Descargar PDF" action="#{billController.generateBill}" ajax="false" ></p:commandButton>
-
+			<div class="container text-end">
+				<div class="row">
+					<div class="col">
+					</div>
+					<div class="col">
+					</div>
+					<div class="col">
+						<p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}"
+										 oncomplete="PF('manageProductDialog').show()" update="dialogs"
+										 styleClass="rounded-button"></p:commandButton>
+					</div>
+					<div class="col">
+						<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}" ajax="false"
+										 update="billForm:detalleFacturaId" styleClass="rounded-button ui-button-danger"></p:commandButton>
+					</div>
+				</div>
+			</div>
+			<br />
 			<div class="card">
 				<h5>Detalle de factura</h5>
 				<p:dataTable id="detalleFacturaId" var="detalle"
@@ -138,7 +150,7 @@
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 						value="#{billController.detailSelected.valorFinal}" />
 						
-					<p:outputLabel for="@next" value="Valor Final" />
+					<p:outputLabel for="@next" value="Unidades" />
 					<p:inputNumber id="unidades" symbolPosition="s"
 						decimalPlaces="0" 
 						value="#{billController.detailSelected.unidades}" />

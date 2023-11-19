@@ -26,6 +26,9 @@
 		<param-name>primefaces.DECIMAL_SEPARATOR</param-name>
 		<param-value>.</param-value>
 	</context-param>
-
+	<!--<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>none</param-value>
+	</context-param>-->
 
 </web-app>

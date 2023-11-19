@@ -61,6 +61,7 @@ public class BillController implements Serializable {
 		ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "/order/new",util.converterJson(bill));
 		if(responseWS.getError().equals("0")){
 			log.info("OK");
+			this.generateBill();
 		}else{
 			log.info("ERROR");
 		}
@@ -119,7 +120,7 @@ public class BillController implements Serializable {
 		try {
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); // Customize the date format as needed
-	        String dateString = dateFormat.format(bill.getFecha());
+	        String dateString = dateFormat.format(bill.getFechaDate());
 					
 			Map<String, Object> parametros = new HashMap<String, Object>();
 			parametros.put("identification", bill.getIdentificacion());
