@@ -58,7 +58,9 @@ public class BillController implements Serializable {
 		Bill responseWS =  apiRestClient.consumeWebServices(Bill.class, "order/searchClient",util.converterJson(bill));
 		//log.info(responseWS.getNombres());
 		//this.bill.setDireccion(responseWS.getDireccion());
-		this.bill = responseWS;
+		if(responseWS.getIdentificacion()!=null) {
+			this.bill = responseWS;
+		}
 	}
 	
 	public void persistWorkOrder() {
