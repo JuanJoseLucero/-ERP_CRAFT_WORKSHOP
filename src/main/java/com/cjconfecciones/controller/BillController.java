@@ -51,6 +51,7 @@ public class BillController implements Serializable {
 	
 	@PostConstruct	
 	private void init() {
+		this.bill.setTotal(BigDecimal.ZERO);
 	}
 	
 	public void  searchClient() {
@@ -60,20 +61,47 @@ public class BillController implements Serializable {
 		//this.bill.setDireccion(responseWS.getDireccion());
 		if(responseWS.getIdentificacion()!=null) {
 			this.bill = responseWS;
+			this.bill.setTotal(BigDecimal.ZERO);
+		}
+	}
+	
+	
+	public Boolean validatePreSave() {
+		try {
+			if (this.bill.getFechaDate()==null) {
+				FacesContext context = FacesContext.getCurrentInstance();
+	            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Fecha obligatoria"));
+	            return false;
+			}
+			return true;
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR WHEN PRE-SAVED ",e);
+			return false;
 		}
 	}
 	
 	public void persistWorkOrder() {
-		String objecto = util.converterJson(bill);
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		bill.setFecha(formatter.format(bill.getFechaDate()));
-		log.info("objecto " .concat(objecto));
-		ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
-		if(responseWS.getError().equals("0")){
-			log.info("OK");
-			this.generateBill();
-		}else{
-			log.info("ERROR");
+		try {
+			if(validatePreSave()) {
+				String objecto = util.converterJson(bill);
+				SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+				bill.setFecha(formatter.format(bill.getFechaDate()));
+				log.info("objecto " .concat(objecto));
+				ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
+				if(responseWS.getError().equals("0")){
+					FacesContext context = FacesContext.getCurrentInstance();
+		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "EXITOSO", "SE ALMACENO CORRECTAMENTE"));
+					this.generateBill();
+				}else{
+					FacesContext context = FacesContext.getCurrentInstance();
+		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
+					log.info("ERROR");
+				}
+			}
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR WHEN PERSIST BILL" ,e);
+			FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
 		}
 	}
 	
@@ -102,13 +130,19 @@ public class BillController implements Serializable {
     }
 	
 	public void saveProduct() {
-		if (!editMode) {
-			detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
-			detailSelected.setFecha(new Date());
-			this.bill.getLstDetailBill().add(detailSelected);
-		}
+		try {
+			if (!editMode) {
+				detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+				detailSelected.setFecha(new Date());
+				this.bill.getLstDetailBill().add(detailSelected);
+			}
+			this.bill.setTotal(bill.getTotal().add(this.detailSelected.getTotal()));
 			PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
 			PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
+			PrimeFaces.current().ajax().update("billForm:total");
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR WHEN SAVE DETAIL ",e);
+		}
 	}
 	
 	
