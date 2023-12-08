@@ -44,6 +44,8 @@ public class BillController implements Serializable {
 	@Inject
 	private Util util;
 	
+	private Boolean disabledSave;
+	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
 	private DetailBill detailSelected;
@@ -52,6 +54,7 @@ public class BillController implements Serializable {
 	@PostConstruct	
 	private void init() {
 		this.bill.setTotal(BigDecimal.ZERO);
+		disabledSave = true;
 	}
 	
 	public void  searchClient() {
@@ -108,10 +111,19 @@ public class BillController implements Serializable {
 	public void newDetail() {
 		this.editMode =false;
 		detailSelected = new DetailBill();
+		setDisabledSave(true);
+		PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+		PrimeFaces.current().ajax().update("dialogs:btnCalcular");
 	}
 	
 	public void editModeTrue() {
 		this.editMode = true;
+	}
+	
+	public void cleanDialog() {
+		detailSelected = new DetailBill();
+		setDisabledSave(true);
+		PrimeFaces.current().ajax().update("dialogs:panel");
 	}
 	
 	public void getCalculatedValues(){
@@ -119,6 +131,9 @@ public class BillController implements Serializable {
             log.info("entro a get calculator valores");
             //if(validationsFields()){
                 this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
+                setDisabledSave(false);
+                PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+                PrimeFaces.current().ajax().update("dialogs:btnCalcular");
                 //this.detailSelected.setValorFinal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")));
                 //log.info(this.calculator.getTotal()+"");
             //}
@@ -132,20 +147,37 @@ public class BillController implements Serializable {
 	public void saveProduct() {
 		try {
 			if (!editMode) {
-				detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
-				detailSelected.setFecha(new Date());
-				this.bill.getLstDetailBill().add(detailSelected);
+				if (this.validatePreSendBill()) {
+					detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+					detailSelected.setFecha(new Date());
+					this.bill.getLstDetailBill().add(detailSelected);
+					this.bill.setTotal(bill.getTotal().add(this.detailSelected.getTotal()));
+					PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
+					PrimeFaces.current().ajax().update("billForm:total");
+					PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
+				}else {
+					FacesContext context = FacesContext.getCurrentInstance();
+		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Valor Final y Unidades obligatorios"));
+				}
 			}
-			this.bill.setTotal(bill.getTotal().add(this.detailSelected.getTotal()));
-			PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
-			PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
-			PrimeFaces.current().ajax().update("billForm:total");
+			
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR WHEN SAVE DETAIL ",e);
 		}
 	}
 	
 	
+	private Boolean validatePreSendBill() {
+		try {
+			if(this.detailSelected.getValorFinal()==null || this.detailSelected.getUnidades()== null) {
+				return false;
+			}
+			return true;
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR PREVALIDATE SENF BILL ",e);
+			return false;
+		}
+	}
 	
 	public void calcular() {
 		log.info("unidades "+bill.getLstDetailBill().get(0).getUnidades());
@@ -238,6 +270,14 @@ public class BillController implements Serializable {
 
 	public void setDetailSelected(DetailBill detailSelected) {
 		this.detailSelected = detailSelected;
+	}
+
+	public Boolean getDisabledSave() {
+		return disabledSave;
+	}
+
+	public void setDisabledSave(Boolean disabledSave) {
+		this.disabledSave = disabledSave;
 	}
 
 }

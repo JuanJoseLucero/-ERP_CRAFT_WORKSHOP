@@ -158,15 +158,17 @@
 
 					<p:row>
 						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton value="Calcular" styleClass="ui-button-success" 
+							<p:commandButton id="btnCalcular" value="Calcular" styleClass="ui-button-success" disabled="#{!billController.disabledSave}"
 							actionListener="#{billController.getCalculatedValues}" update = "dialogs:totalId"/>
 						</p:column>
 						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton value="Enviar a Factura" 
+							<p:commandButton id="btnSendFactura" value="Enviar a Factura" 
+								disabled="#{billController.disabledSave}" 
 								styleClass="ui-button-help" actionListener="#{billController.saveProduct}"/>
 						</p:column>
 						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton value="Limpiar" styleClass="ui-button-danger" />
+							<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
+							actionListener="#{billController.cleanDialog()}" />
 						</p:column>
 					</p:row>
 				</p:panelGrid>
