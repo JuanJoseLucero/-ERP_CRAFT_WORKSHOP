@@ -1,0 +1,59 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="../dashboard.xhtml">
+
+	<h1>Lista de Ordenes</h1>
+	<ui:define name="content">
+		<h:form id="billForm">
+			<div class="card">
+				<br/>
+				<h5>Listado</h5>
+				<p:dataTable id="ordersIdTable" var="order"
+					value="#{listOrderController.orders.pedidos}">
+					<p:column headerText="Codigo">
+						<h:outputText value="#{order.id}" />
+					</p:column>
+					
+					<p:column headerText="Fecha de Entrega">
+						<h:outputText value="#{order.fechaEntrega}" />
+					</p:column>
+					
+					<p:column headerText="Total">
+						<h:outputText value="#{order.total}" />
+					</p:column>
+					
+					<p:column headerText="Nombre">
+						<h:outputText value="#{order.nombre}" />
+					</p:column>
+					
+					<p:column headerText="Dirección">
+						<h:outputText value="#{order.direccion}" />
+					</p:column>
+					
+					<p:column headerText="Telefono">
+						<h:outputText value="#{order.telefono}" />
+					</p:column>
+					
+					<p:column headerText="Detalle">
+						<h:outputText value="#{order.detalle}" />
+					</p:column>
+					
+					<p:column exportable="false">
+						<p:commandButton icon="pi pi-pencil"
+							styleClass="edit-button rounded-button ui-button-success"
+							actionListener="#{billController.editModeTrue}"
+							process="@this">
+							<f:setPropertyActionListener value="#{product}"
+								target="#{crudView.selectedProduct}" />
+							<p:resetInput target=":dialogs:panel" />
+						</p:commandButton>
+					</p:column>
+					
+				</p:dataTable>
+			</div>
+			<br />
+		</h:form>
+	</ui:define>
+</ui:composition>
