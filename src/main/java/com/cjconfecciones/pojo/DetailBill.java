@@ -14,11 +14,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DetailBill {
 	
+	private Integer id;
 	private BigDecimal unidades;
 	private String descripcion;
 	private BigDecimal valorUnitario;
 	private BigDecimal total;
-	private Date fecha;
+	private Date 	;
 	private BigDecimal puntadas;
 	private BigDecimal valorFinal;
 }

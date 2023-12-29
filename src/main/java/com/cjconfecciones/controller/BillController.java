@@ -53,6 +53,9 @@ public class BillController implements Serializable {
 	
 	@PostConstruct	
 	private void init() {
+		if(sessionController.getBillSesion().getPedidoId()!=null) {
+			log.info("-----------".concat(sessionController.getBillSesion().getPedidoId()));
+		}
 		this.bill.setTotal(BigDecimal.ZERO);
 		disabledSave = true;
 	}

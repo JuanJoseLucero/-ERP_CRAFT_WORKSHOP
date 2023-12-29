@@ -3,6 +3,7 @@ package com.cjconfecciones.controller;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
+import com.cjconfecciones.pojo.Bill;
 import com.cjconfecciones.pojo.Calculator;
 
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import jakarta.inject.Named;
 public class SessionController implements Serializable{
 
 	private Calculator calculator = new Calculator();
+	private Bill billSesion = new Bill();
 	
 	Logger log = Logger.getLogger(SessionController.class.getName());
 	
@@ -30,5 +32,12 @@ public class SessionController implements Serializable{
 		this.calculator = calculator;
 	}
 
-	
+	public Bill getBillSesion() {
+		return billSesion;
+	}
+
+	public void setBillSesion(Bill billSesion) {
+		this.billSesion = billSesion;
+	}
+
 }

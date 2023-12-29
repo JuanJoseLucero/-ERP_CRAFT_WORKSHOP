@@ -16,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bill {
+	private String pedidoId;
 	private String identificacion;
 	private String nombres;
 	private Date fechaDate;

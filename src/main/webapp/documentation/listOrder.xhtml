@@ -43,11 +43,8 @@
 					<p:column exportable="false">
 						<p:commandButton icon="pi pi-pencil"
 							styleClass="edit-button rounded-button ui-button-success"
-							actionListener="#{billController.editModeTrue}"
+							actionListener="#{listOrderController.modifyOrder(order.id)}"
 							process="@this">
-							<f:setPropertyActionListener value="#{product}"
-								target="#{crudView.selectedProduct}" />
-							<p:resetInput target=":dialogs:panel" />
 						</p:commandButton>
 					</p:column>
 					
