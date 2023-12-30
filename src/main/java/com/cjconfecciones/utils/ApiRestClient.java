@@ -33,6 +33,7 @@ public class ApiRestClient implements Serializable{
 	
 	public <T> T consumeWebServices(Class<T> classResponse, String resource, String json) {
 		//String url = "http://localhost:8080/back/rest/order/new";
+		log.info(json);
 		String url = propiedades.getOrderProperties("apiCore");
 		url = url.concat(resource);
 		T response = null;

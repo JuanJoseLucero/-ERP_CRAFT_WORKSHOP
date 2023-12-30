@@ -53,11 +53,19 @@ public class BillController implements Serializable {
 	
 	@PostConstruct	
 	private void init() {
-		if(sessionController.getBillSesion().getPedidoId()!=null) {
-			log.info("-----------".concat(sessionController.getBillSesion().getPedidoId()));
+		try {
+			if(sessionController.getBillSesion().getPedidoId()!=null) {
+				log.info("-----------".concat(sessionController.getBillSesion().getPedidoId()));
+				Bill billSaved = apiRestClient.consumeWebServices(Bill.class, "order/getOrderById",util.converterJson(sessionController.getBillSesion()));
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+				billSaved.setFechaDate(sdf.parse(billSaved.getFecha()));
+				bill = billSaved;
+			}
+			this.bill.setTotal(BigDecimal.ZERO);
+			disabledSave = true;
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO INIT CONTROLLER ",e);
 		}
-		this.bill.setTotal(BigDecimal.ZERO);
-		disabledSave = true;
 	}
 	
 	public void  searchClient() {

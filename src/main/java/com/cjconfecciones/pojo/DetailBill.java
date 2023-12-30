@@ -19,7 +19,7 @@ public class DetailBill {
 	private String descripcion;
 	private BigDecimal valorUnitario;
 	private BigDecimal total;
-	private Date 	;
+	private Date fecha;
 	private BigDecimal puntadas;
 	private BigDecimal valorFinal;
 }
