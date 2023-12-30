@@ -51,7 +51,9 @@
 					value="#{billController.bill.lstDetailBill}">
 
 					<p:column headerText="Fecha">
-						<h:outputText value="#{detalle.fecha}" />
+						<h:outputText value="#{detalle.fecha}" >
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
 					</p:column>
 					
 					<p:column headerText="Unidades">
@@ -77,8 +79,8 @@
 							styleClass="edit-button rounded-button ui-button-success"
 							actionListener="#{billController.editModeTrue}"
 							process="@this">
-							<f:setPropertyActionListener value="#{product}"
-								target="#{crudView.selectedProduct}" />
+							<f:setPropertyActionListener value="#{detalle}"
+								target="#{billController.detailSelected}" />
 							<p:resetInput target=":dialogs:panel" />
 						</p:commandButton>
 					</p:column>
@@ -133,11 +135,11 @@
 						value="#{billController.detailSelected.descripcion}" />
 
 					<p:outputLabel for="@next" value="Puntadas" />
-					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0"
+					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()"
 						value="#{billController.detailSelected.puntadas}" />
 
 					<p:outputLabel for="@next" value="Valor Unitario" />
-					<p:inputNumber id="valorUnitarioId" symbolPosition="s"
+					<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()"
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 						value="#{billController.detailSelected.valorUnitario}" />
 
@@ -173,6 +175,9 @@
 					</p:row>
 				</p:panelGrid>
 			</p:dialog>
+			 
+			<p:remoteCommand name="blurPuntadas"  process="@this" actionListener="#{billController.blurPuntadas()}"/>
+			<p:remoteCommand name="blurValorUnitario"  process="@this" actionListener="#{billController.blurValorUnitario()}"/>
 			
 		</h:form>
 

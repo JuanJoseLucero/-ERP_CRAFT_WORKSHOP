@@ -166,13 +166,14 @@ public class BillController implements Serializable {
 					this.bill.setTotal(bill.getTotal().add(this.detailSelected.getTotal()));
 					PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 					PrimeFaces.current().ajax().update("billForm:total");
-					PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
 				}else {
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Valor Final y Unidades obligatorios"));
 				}
+			}else {
+				PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 			}
-			
+			PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR WHEN SAVE DETAIL ",e);
 		}
@@ -229,42 +230,54 @@ public class BillController implements Serializable {
 	public void onCellEdit(CellEditEvent event) {
 		log.info("entra eliminar3");
 		bill.getLstDetailBill().clear();
-		/*
-		log.info("Entro al cell edit");
-		Object newValue = event.getNewValue();
-		BigDecimal unidades = new BigDecimal(String.valueOf(newValue));
-		sessionController.getCalculator().setValorFinal(unidades.multiply(sessionController.getCalculator().getValorUnitario()));
-		bill.getLstDetailBill().clear();
-		List<DetailBill> lstDetailBill = new ArrayList<DetailBill>();
-		detail.setDescripcion(sessionController.getCalculator().getDiseño());
-		detail.setValorUnitario(sessionController.getCalculator().getValorFinal());
-		detail.setTotal(sessionController.getCalculator().getTotal());		
-		lstDetailBill.add(detail);
-		bill.setLstDetailBill(lstDetailBill);
-		
-		*/
-		
-		
-		//PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
-		
-		/*
-		log.info("Entro al cell edit");
-		 Object newValue = event.getNewValue();
-		 BigDecimal unidades = new BigDecimal(String.valueOf(newValue));
-		 sessionController.getCalculator().setValorFinal(unidades.multiply(sessionController.getCalculator().getValorUnitario()));
-		 bill.getLstDetailBill().get(0).setTotal(sessionController.getCalculator().getValorFinal());
-		 log.info(bill.getLstDetailBill().get(0).getTotal()+"");
-		 PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
-		 
-		 */
-//        Object oldValue = event.getOldValue();
-//        Object newValue = event.getNewValue();
-//
-//        if (newValue != null && !newValue.equals(oldValue)) {
-//        	log.info("Cell Changed Old: " + oldValue + ", New:" + newValue);
-//        	
-//        }
     }
+	
+	public void blurValorUnitario() {
+		try {
+			this.detailSelected.setTotal(BigDecimal.ZERO);
+			this.detailSelected.setValorFinal(BigDecimal.ZERO);
+			PrimeFaces.current().ajax().update("dialogs:totalId");
+			PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+			setDisabledSave(true);
+            PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+            PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ",e);
+		}
+	}
+	
+	public void blurPuntadas() {
+		try {
+			this.detailSelected.setValorUnitario(BigDecimal.ZERO);
+			this.detailSelected.setTotal(BigDecimal.ZERO);
+			this.detailSelected.setValorFinal(BigDecimal.ZERO);
+			PrimeFaces.current().ajax().update("dialogs:valorUnitarioId");
+			PrimeFaces.current().ajax().update("dialogs:totalId");
+			PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+			setDisabledSave(true);
+            PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+            PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ",e);
+		}
+	}
+	
+	/**
+	 * <p:inputNumber id="valorUnitarioId" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.valorUnitario}" />
+
+					<p:outputLabel for="@next" value="Total" />
+					<p:inputNumber id="totalId" disabled="true" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.total}" />
+
+					<p:outputLabel for="@next" value="Valor Final" />
+					<p:inputNumber id="valorFinalId" symbolPosition="s"
+						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						value="#{billController.detailSelected.valorFinal}" />
+	 * @return
+	 */
 
 
 	public Bill getBill() {
