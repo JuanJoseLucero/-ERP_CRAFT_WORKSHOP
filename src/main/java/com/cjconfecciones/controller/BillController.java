@@ -60,8 +60,9 @@ public class BillController implements Serializable {
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				billSaved.setFechaDate(sdf.parse(billSaved.getFecha()));
 				bill = billSaved;
+			}else {
+				this.bill.setTotal(BigDecimal.ZERO);
 			}
-			this.bill.setTotal(BigDecimal.ZERO);
 			disabledSave = true;
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO INIT CONTROLLER ",e);
