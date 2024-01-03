@@ -22,7 +22,9 @@ import com.cjconfecciones.utils.GenerateReport;
 import com.cjconfecciones.utils.Util;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
@@ -30,7 +32,7 @@ import jakarta.inject.Named;
 
 @Named
 @ViewScoped
-public class BillController implements Serializable {
+public class BillController implements Serializable{
 
 	@Inject
 	private SessionController sessionController;
@@ -54,6 +56,7 @@ public class BillController implements Serializable {
 	@PostConstruct	
 	private void init() {
 		try {
+			log.info(getPreviousPageUrl());
 			if(sessionController.getBillSesion().getPedidoId()!=null) {
 				log.info("-----------".concat(sessionController.getBillSesion().getPedidoId()));
 				Bill billSaved = apiRestClient.consumeWebServices(Bill.class, "order/getOrderById",util.converterJson(sessionController.getBillSesion()));
@@ -68,6 +71,16 @@ public class BillController implements Serializable {
 			log.log(Level.SEVERE, "ERROR TO INIT CONTROLLER ",e);
 		}
 	}
+	
+	 public String getPreviousPageUrl() {
+	        FacesContext context = FacesContext.getCurrentInstance();
+	        ExternalContext externalContext = context.getExternalContext();
+	        
+	        // Obtener el encabezado referer que contiene la URL de la página anterior
+	        String previousPageUrl = externalContext.getRequestHeaderMap().get("referer");
+
+	        return previousPageUrl;
+	    }
 	
 	public void  searchClient() {
 		log.info("objecto " .concat(util.converterJson(bill)));
@@ -98,10 +111,13 @@ public class BillController implements Serializable {
 	public void persistWorkOrder() {
 		try {
 			if(validatePreSave()) {
-				String objecto = util.converterJson(bill);
+				
 				SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 				bill.setFecha(formatter.format(bill.getFechaDate()));
+				bill.setLstDetailBill(this.converterDateDetail(bill.getLstDetailBill()));
+				String objecto = util.converterJson(bill);
 				log.info("objecto " .concat(objecto));
+				
 				ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
 				if(responseWS.getError().equals("0")){
 					FacesContext context = FacesContext.getCurrentInstance();
@@ -118,6 +134,18 @@ public class BillController implements Serializable {
 			FacesContext context = FacesContext.getCurrentInstance();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
 		}
+	}
+	
+	public List<DetailBill> converterDateDetail (List<DetailBill> detail){
+		try {
+			for (DetailBill o  :detail) {
+				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+				o.setFechaCadena(sdf.format(o.getFecha()));
+			}
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO CONVERTER DETAIL DATE",e);
+		}
+		return detail;
 	}
 	
 	public void newDetail() {
@@ -260,6 +288,10 @@ public class BillController implements Serializable {
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ",e);
 		}
+	}
+	
+	public void preDestroy() {
+		this.sessionController.setBillSesion(new Bill());
 	}
 	
 	/**

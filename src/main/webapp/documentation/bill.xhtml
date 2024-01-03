@@ -178,8 +178,14 @@
 			 
 			<p:remoteCommand name="blurPuntadas"  process="@this" actionListener="#{billController.blurPuntadas()}"/>
 			<p:remoteCommand name="blurValorUnitario"  process="@this" actionListener="#{billController.blurValorUnitario()}"/>
-			
+			<p:remoteCommand name="preDestroy"  process="@this" actionListener="#{billController.preDestroy()}"/>
 		</h:form>
+		
+		<script type="text/javascript">
+		window.addEventListener('beforeunload', function(event) {
+			preDestroy()
+		});
+		</script>
 
 	</ui:define>
 </ui:composition>

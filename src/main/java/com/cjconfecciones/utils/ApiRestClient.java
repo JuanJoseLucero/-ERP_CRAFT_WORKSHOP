@@ -45,6 +45,7 @@ public class ApiRestClient implements Serializable{
 			if(responsePeticion.getStatusLine().getStatusCode() == 200) {
 				HttpEntity entity = responsePeticion.getEntity();
 				String jsonResponse = entity !=null ? EntityUtils.toString(entity):"";
+				log.info("RESPUESTA ".concat(jsonResponse));
 				Type tipoRespuesta =  TypeToken.getParameterized(classResponse).getType();
 				response = new Gson().fromJson(jsonResponse	,tipoRespuesta);
 			}else {
