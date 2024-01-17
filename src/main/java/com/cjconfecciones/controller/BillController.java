@@ -72,6 +72,14 @@ public class BillController implements Serializable{
 		}
 	}
 	
+	public void automaticCalculation() {
+		try {
+			log.info("AUTOMATIC CALCULATION");
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR AUTOMATIC CALCULATION ",e);
+		}
+	}
+	
 	 public String getPreviousPageUrl() {
 	        FacesContext context = FacesContext.getCurrentInstance();
 	        ExternalContext externalContext = context.getExternalContext();
@@ -89,7 +97,7 @@ public class BillController implements Serializable{
 		//this.bill.setDireccion(responseWS.getDireccion());
 		if(responseWS.getIdentificacion()!=null) {
 			this.bill = responseWS;
-			this.bill.setTotal(BigDecimal.ZERO);
+			//this.bill.setTotal(BigDecimal.ZERO);
 		}
 	}
 	
@@ -122,7 +130,9 @@ public class BillController implements Serializable{
 				if(responseWS.getError().equals("0")){
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "EXITOSO", "SE ALMACENO CORRECTAMENTE"));
-					this.generateBill();
+					//this.generateBill();
+				    ExternalContext externalContext = context.getExternalContext();
+				    externalContext.redirect("listOrder.xhtml");
 				}else{
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
@@ -170,10 +180,12 @@ public class BillController implements Serializable{
         try{
             log.info("entro a get calculator valores");
             //if(validationsFields()){
-                this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
-                setDisabledSave(false);
-                PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
-                PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+            	if(detailSelected.getPuntadas()!=null&&detailSelected.getValorUnitario()!=null) {
+            		this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
+                    setDisabledSave(false);
+                    PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+            	}
+                
                 //this.detailSelected.setValorFinal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")));
                 //log.info(this.calculator.getTotal()+"");
             //}
@@ -184,14 +196,37 @@ public class BillController implements Serializable{
         }
     }
 	
+	
+	public void blurValorFinal() {
+		try {
+			if(detailSelected.getUnidades()!=null) {
+				this.blurUnidades();
+			}
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO BLUR UNIDADES ",e);
+		}
+	}
+	
+	public void blurUnidades() {
+		try {
+			//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			setDisabledSave(false);
+			PrimeFaces.current().ajax().update("dialogs:subTotal");
+			PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO BLUR UNIDADES ",e);
+		}
+	}
+	
 	public void saveProduct() {
 		try {
 			if (!editMode) {
 				if (this.validatePreSendBill()) {
-					detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+					//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
 					detailSelected.setFecha(new Date());
 					this.bill.getLstDetailBill().add(detailSelected);
-					this.bill.setTotal(bill.getTotal().add(this.detailSelected.getTotal()));
+					this.bill.setTotal(bill.getTotal().add(this.detailSelected.getSubValorFactura()));
 					PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 					PrimeFaces.current().ajax().update("billForm:total");
 				}else {
@@ -199,12 +234,27 @@ public class BillController implements Serializable{
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Valor Final y Unidades obligatorios"));
 				}
 			}else {
+				this.bill.setTotal(this.calculateTotalBill());
+				PrimeFaces.current().ajax().update("billForm:total");
 				PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 			}
 			PrimeFaces.current().executeScript("PF('manageProductDialog').hide()");
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR WHEN SAVE DETAIL ",e);
 		}
+	}
+	
+	
+	private BigDecimal calculateTotalBill() {
+		BigDecimal respuesta = BigDecimal.ZERO;
+		try {
+			for(DetailBill detalle : this.bill.getLstDetailBill()) {
+				respuesta = respuesta.add(detalle.getSubValorFactura());
+			}
+		}catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO CALCULATE TOTAL BILL ",e);
+		}
+		return respuesta;
 	}
 	
 	
@@ -262,10 +312,13 @@ public class BillController implements Serializable{
 	
 	public void blurValorUnitario() {
 		try {
-			this.detailSelected.setTotal(BigDecimal.ZERO);
-			this.detailSelected.setValorFinal(BigDecimal.ZERO);
+			//this.detailSelected.setTotal(BigDecimal.ZERO);
+			this.getCalculatedValues();
+			this.detailSelected.setValorFinal(null);
+			this.detailSelected.setSubValorFactura(null); 
 			PrimeFaces.current().ajax().update("dialogs:totalId");
 			PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+			PrimeFaces.current().ajax().update("dialogs:subTotal");
 			setDisabledSave(true);
             PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
             PrimeFaces.current().ajax().update("dialogs:btnCalcular");
@@ -276,17 +329,27 @@ public class BillController implements Serializable{
 	
 	public void blurPuntadas() {
 		try {
-			this.detailSelected.setValorUnitario(BigDecimal.ZERO);
-			this.detailSelected.setTotal(BigDecimal.ZERO);
-			this.detailSelected.setValorFinal(BigDecimal.ZERO);
-			PrimeFaces.current().ajax().update("dialogs:valorUnitarioId");
-			PrimeFaces.current().ajax().update("dialogs:totalId");
-			PrimeFaces.current().ajax().update("dialogs:valorFinalId");
-			setDisabledSave(true);
-            PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
-            PrimeFaces.current().ajax().update("dialogs:btnCalcular");
-		}catch (Exception e) {
-			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ",e);
+			if(this.detailSelected.getValorUnitario()!=null&&this.detailSelected.getTotal()!=null ) {
+				blurValorUnitario();
+				this.detailSelected.setValorFinal(null);
+				this.detailSelected.setSubValorFactura(null);
+				PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+				PrimeFaces.current().ajax().update("dialogs:subTotal");
+				setDisabledSave(true);
+				PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+			}else {
+				this.detailSelected.setValorUnitario(null);
+				this.detailSelected.setTotal(null);
+				this.detailSelected.setValorFinal(null);
+				PrimeFaces.current().ajax().update("dialogs:valorUnitarioId");
+				PrimeFaces.current().ajax().update("dialogs:totalId");
+				PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+				setDisabledSave(true);
+				PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+				PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ", e);
 		}
 	}
 	

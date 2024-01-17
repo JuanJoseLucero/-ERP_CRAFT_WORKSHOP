@@ -39,8 +39,8 @@
 										 styleClass="rounded-button"></p:commandButton>
 					</div>
 					<div class="col">
-						<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}" ajax="false"
-										 update="billForm:detalleFacturaId" styleClass="rounded-button ui-button-danger"></p:commandButton>
+						<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}"
+										 update="general:messages" styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 				</div>
 			</div>
@@ -69,7 +69,7 @@
 					</p:column>
 					
 					<p:column id="cellValorTotalId" headerText="Valor Total">
-						<h:outputText value="#{detalle.total}" />
+						<h:outputText value="#{detalle.subValorFactura}" />
 					</p:column>
 
 					<p:column exportable="false">
@@ -88,7 +88,7 @@
 				</p:dataTable>
 			</div>
 			<br />
-			<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}" process="@this, billForm:identificacion" update="billForm:headerBill"/>
+			<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}" process="@this, billForm:identificacion" update=" billForm:nombres, billForm:fecha, billForm:direccion, billForm:telefono"/>
 		</h:form>
         <script>
     PrimeFaces.locales['es'] = {
@@ -135,56 +135,109 @@
 						value="#{billController.detailSelected.descripcion}" />
 
 					<p:outputLabel for="@next" value="Puntadas" />
-					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()"
+					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()" 
+						onkeypress="pressCalculatorPuntadas(event)"
 						value="#{billController.detailSelected.puntadas}" />
 
 					<p:outputLabel for="@next" value="Valor Unitario" />
-					<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()"
+					<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()" 
+						onkeypress="pressCalculatorValorUnitario(event)" emptyValue=""
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 						value="#{billController.detailSelected.valorUnitario}" />
 
 					<p:outputLabel for="@next" value="Total" />
-					<p:inputNumber id="totalId" disabled="true" symbolPosition="s"
+					<p:inputNumber id="totalId" disabled="true" symbolPosition="s" emptyValue=""
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 						value="#{billController.detailSelected.total}" />
 
 					<p:outputLabel for="@next" value="Valor Final" />
-					<p:inputNumber id="valorFinalId" symbolPosition="s"
+					<p:inputNumber id="valorFinalId" symbolPosition="s" emptyValue=""
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+						onkeypress="pressCalculatorValorFinal(event)"
 						value="#{billController.detailSelected.valorFinal}" />
 						
 					<p:outputLabel for="@next" value="Unidades" />
 					<p:inputNumber id="unidades" symbolPosition="s"
-						decimalPlaces="0" 
+						decimalPlaces="0"  onblur="blurValorUnidades()"
+						onkeypress="pressCalculatorUnidades(event)"
 						value="#{billController.detailSelected.unidades}" />
+						
+					<p:outputLabel for="@next" value="SubTotal" />
+					<p:inputNumber id="subTotal" symbolPosition="s"
+						decimalPlaces="0" 
+						value="#{billController.detailSelected.subValorFactura}" />
 
 					<p:row>
 						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton id="btnCalcular" value="Calcular" styleClass="ui-button-success" disabled="#{!billController.disabledSave}"
-							actionListener="#{billController.getCalculatedValues}" update = "dialogs:totalId"/>
+							<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
+							actionListener="#{billController.cleanDialog()}" />
+						</p:column>
+						<p:column styleClass="ui-grid-col-4">
+							
 						</p:column>
 						<p:column styleClass="ui-grid-col-4">
 							<p:commandButton id="btnSendFactura" value="Enviar a Factura" 
 								disabled="#{billController.disabledSave}" 
 								styleClass="ui-button-help" actionListener="#{billController.saveProduct}"/>
 						</p:column>
-						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
-							actionListener="#{billController.cleanDialog()}" />
-						</p:column>
 					</p:row>
 				</p:panelGrid>
 			</p:dialog>
 			 
-			<p:remoteCommand name="blurPuntadas"  process="@this" actionListener="#{billController.blurPuntadas()}"/>
-			<p:remoteCommand name="blurValorUnitario"  process="@this" actionListener="#{billController.blurValorUnitario()}"/>
-			<p:remoteCommand name="preDestroy"  process="@this" actionListener="#{billController.preDestroy()}"/>
+			<p:remoteCommand name="blurPuntadas"  process="@form" actionListener="#{billController.blurPuntadas()}"/>
+			<p:remoteCommand name="blurValorUnitario"  process="@form" actionListener="#{billController.blurValorUnitario()}"/>
+			<p:remoteCommand name="blurValorUnidades"  process="@form" actionListener="#{billController.blurUnidades()}"/>
+			<p:remoteCommand name="blurValorFinal"  process="@form" actionListener="#{billController.blurUnidades()}"/>
 		</h:form>
 		
 		<script type="text/javascript">
 		window.addEventListener('beforeunload', function(event) {
 			preDestroy()
 		});
+
+		function pressCalculatorPuntadas(event){
+			//console.log(event.key=='Enter')
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurPuntadas()
+					return false;
+				}
+			}
+
+		function pressCalculatorValorUnitario(event){
+			//console.log(event.key=='Enter')
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurValorUnitario()
+					return false;
+				}
+			}
+
+		function pressCalculatorUnidades(event){
+			//console.log(event.key=='Enter')
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurValorUnidades()
+					return false;
+				}
+			}
+
+		function pressCalculatorValorFinal(event){
+			//console.log(event.key=='Enter')
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurValorFinal()
+					return false;
+				}
+			}
+
+		function pressDisabledEnter(event){
+			//console.log(event.key=='Enter')
+			if(event.key=='Enter'){
+					event.preventDefault();
+					return false;
+				}
+			}
 		</script>
 
 	</ui:define>
