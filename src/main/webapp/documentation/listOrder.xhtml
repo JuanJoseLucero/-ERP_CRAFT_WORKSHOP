@@ -16,11 +16,11 @@
 						<h:outputText value="#{order.id}" />
 					</p:column>
 					
-					<p:column headerText="Fecha Real">
+					<p:column headerText="Fecha Real" >
 						<h:outputText value="#{order.freal}" />
 					</p:column>
 					
-					<p:column headerText="Fecha de Entrega">
+					<p:column headerText="Fecha de Entrega" >
 						<h:outputText value="#{order.fechaEntrega}" />
 					</p:column>
 					
@@ -28,7 +28,7 @@
 						<h:outputText value="#{order.total}" />
 					</p:column>
 					
-					<p:column headerText="Nombre">
+					<p:column headerText="Nombre" filterBy="#{order.nombre}" filterMatchMode="contains">
 						<h:outputText value="#{order.nombre}" />
 					</p:column>
 					
@@ -40,7 +40,7 @@
 						<h:outputText value="#{order.telefono}" />
 					</p:column>
 					
-					<p:column headerText="Detalle">
+					<p:column headerText="Detalle" filterBy="#{order.nombre}" filterMatchMode="contains">
 						<h:outputText value="#{order.detalle}" />
 					</p:column>
 					

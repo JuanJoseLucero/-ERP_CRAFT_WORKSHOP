@@ -9,17 +9,17 @@
     <ui:define name="content">
     	<h:form id="billForm">
             <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
-                <p:outputLabel for="identificacion" value="Identificación:"/>
+                <p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
                 <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()"/>
-
-                <p:outputLabel for="nombres" value="Nombres:"/>
-                <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
-
-                <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
-                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline"/>
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
                 <p:inputText id="direccion" value="#{billController.bill.direccion}"/>
+                
+                <p:outputLabel for="nombres" value="Nombres:"/>
+                <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
+                
+                <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
+                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline"/>
                 
                 <p:outputLabel for="telefono" value="Telefono:"/>
                 <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
@@ -130,7 +130,7 @@
 					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
 					style="border:0px none; background-color:transparent;">
 
-					<p:outputLabel for="@next" value="Diseño" />
+					<p:outputLabel for="@next" value="Nombre del Bordado" />
 					<p:inputTextarea id="disenioId" rows="3"
 						value="#{billController.detailSelected.descripcion}" />
 
@@ -139,7 +139,7 @@
 						onkeypress="pressCalculatorPuntadas(event)"
 						value="#{billController.detailSelected.puntadas}" />
 
-					<p:outputLabel for="@next" value="Valor Unitario" />
+					<p:outputLabel for="@next" value="Valor de la puntada" />
 					<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()" 
 						onkeypress="pressCalculatorValorUnitario(event)" emptyValue=""
 						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
@@ -156,7 +156,7 @@
 						onkeypress="pressCalculatorValorFinal(event)"
 						value="#{billController.detailSelected.valorFinal}" />
 						
-					<p:outputLabel for="@next" value="Unidades" />
+					<p:outputLabel for="@next" value="Total de prendas" />
 					<p:inputNumber id="unidades" symbolPosition="s"
 						decimalPlaces="0"  onblur="blurValorUnidades()"
 						onkeypress="pressCalculatorUnidades(event)"
@@ -188,6 +188,7 @@
 			<p:remoteCommand name="blurValorUnitario"  process="@form" actionListener="#{billController.blurValorUnitario()}"/>
 			<p:remoteCommand name="blurValorUnidades"  process="@form" actionListener="#{billController.blurUnidades()}"/>
 			<p:remoteCommand name="blurValorFinal"  process="@form" actionListener="#{billController.blurUnidades()}"/>
+			<p:remoteCommand name="preDestroy"  process="@this" actionListener="#{billController.preDestroy()}"/>
 		</h:form>
 		
 		<script type="text/javascript">
