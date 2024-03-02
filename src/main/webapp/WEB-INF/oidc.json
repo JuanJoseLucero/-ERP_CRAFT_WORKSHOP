@@ -1,0 +1,10 @@
+{
+  "realm": "cjconfecciones",
+  "auth-server-url": "http://localhost:8183/",
+  "ssl-required": "external",
+  "resource": "cjconfecciones_client",
+  "credentials": {
+    "secret": "tOVQzBZ5hYAq14mt83RfrEou1TmiyHEc"
+  },
+  "confidential-port": 0
+}

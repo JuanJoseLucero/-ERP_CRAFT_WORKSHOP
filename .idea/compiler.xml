@@ -9,8 +9,5 @@
         <module name="jakartaee-hello-world" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="jakartaee-hello-world" target="16" />
-    </bytecodeTargetLevel>
   </component>
 </project>

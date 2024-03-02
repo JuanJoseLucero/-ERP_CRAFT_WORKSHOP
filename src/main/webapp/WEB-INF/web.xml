@@ -31,4 +31,25 @@
 		<param-value>none</param-value>
 	</context-param>-->
 
+	<login-config>
+        <auth-method>OIDC</auth-method>
+	</login-config>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Secured JSF Page</web-resource-name>
+			<url-pattern>/bill.xhtml</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Manager</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-role>
+		<role-name>Manager</role-name>
+	</security-role>
+
+
+
+
 </web-app>
