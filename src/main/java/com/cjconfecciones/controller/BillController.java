@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.cjconfecciones.pojo.ResponseCJ;
+import jakarta.servlet.annotation.HttpMethodConstraint;
+import jakarta.servlet.annotation.ServletSecurity;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 
@@ -34,6 +36,7 @@ import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthentic
 
 @Named
 @ViewScoped
+//@ServletSecurity(httpMethodConstraints = { @HttpMethodConstraint(value = "GET", rolesAllowed = { "Manager" }) })
 public class BillController implements Serializable{
 
 	@Inject
@@ -49,11 +52,16 @@ public class BillController implements Serializable{
 	private Util util;
 	
 	private Boolean disabledSave;
+	private Boolean disabledSaveEstampados;
+	private Boolean disabledSaveConfeccion;
 	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
 	private DetailBill detailSelected;
+	private DetailBill detailSelected_estampado;
+	private DetailBill detailSelected_confecciones;
 	private Boolean editMode = false;
+	private String indexTab= "0";
 	
 	@PostConstruct	
 	private void init() {
@@ -69,6 +77,7 @@ public class BillController implements Serializable{
 				this.bill.setTotal(BigDecimal.ZERO);
 			}
 			disabledSave = true;
+			disabledSaveEstampados = true;
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO INIT CONTROLLER ",e);
 		}
@@ -163,19 +172,39 @@ public class BillController implements Serializable{
 	public void newDetail() {
 		this.editMode =false;
 		detailSelected = new DetailBill();
+		detailSelected_estampado = new DetailBill();
+		detailSelected_confecciones = new DetailBill();
 		setDisabledSave(true);
-		PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+		PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
 		PrimeFaces.current().ajax().update("dialogs:btnCalcular");
 	}
 	
-	public void editModeTrue() {
+	public void editModeTrue(String options) {
 		this.editMode = true;
+		if("E".equals(options)){
+			this.detailSelected_confecciones = new DetailBill();
+			this.detailSelected = new DetailBill();
+			this.indexTab = "0";
+		}else if("C".equals(options)){
+			this.detailSelected_estampado = new DetailBill();
+			this.detailSelected = new DetailBill();
+			this.indexTab = "1";
+		}else if("B".equals(options)){
+			this.detailSelected_confecciones = new DetailBill();
+			this.detailSelected_estampado = new DetailBill();
+			this.indexTab = "2";
+		}
 	}
+
 	
 	public void cleanDialog() {
 		detailSelected = new DetailBill();
+		detailSelected_confecciones = new DetailBill();
+		detailSelected_estampado = new DetailBill();
 		setDisabledSave(true);
-		PrimeFaces.current().ajax().update("dialogs:panel");
+		setDisabledSaveConfeccion(true);
+		setDisabledSaveEstampados(true);
+		PrimeFaces.current().ajax().update("dialogs:idTabView");
 	}
 	
 	public void getCalculatedValues(){
@@ -185,7 +214,7 @@ public class BillController implements Serializable{
             	if(detailSelected.getPuntadas()!=null&&detailSelected.getValorUnitario()!=null) {
             		this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
                     setDisabledSave(false);
-                    PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+                    PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
             	}
                 
                 //this.detailSelected.setValorFinal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")));
@@ -208,27 +237,75 @@ public class BillController implements Serializable{
 			log.log(Level.SEVERE, "ERROR TO BLUR UNIDADES ",e);
 		}
 	}
-	
+
+	public void blurSimpleValorUnitario(String option){
+		try{
+			if ("C".equals(option)){
+				detailSelected_confecciones.setSubValorFactura(detailSelected_confecciones.getValorFinal().multiply(detailSelected_confecciones.getUnidades()!=null?detailSelected_confecciones.getUnidades():BigDecimal.ZERO));
+				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotalSimpleConfeccion");
+				if(detailSelected_confecciones.getSubValorFactura()!=null &&
+						detailSelected_confecciones.getSubValorFactura().compareTo(BigDecimal.ZERO)>0){
+					this.disabledSaveConfeccion  =false;
+				}else{
+					this.disabledSaveConfeccion = true;
+				}
+			}else{
+				detailSelected_estampado.setSubValorFactura(detailSelected_estampado.getValorFinal().multiply(detailSelected_estampado.getUnidades()!=null?detailSelected_estampado.getUnidades():BigDecimal.ZERO));
+				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotalSimpleEstampado");
+				if(detailSelected_estampado.getSubValorFactura()!=null &&
+						detailSelected_estampado.getSubValorFactura().compareTo(BigDecimal.ZERO)>0){
+					this.disabledSaveEstampados =false;
+				}else{
+					this.disabledSaveEstampados = true;
+				}
+				PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFacturaEstampado");
+			}
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR BLUR SIMPLE UNIDADES ",e);
+		}
+	}
+
 	public void blurUnidades() {
 		try {
 			//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
 			detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
 			setDisabledSave(false);
-			PrimeFaces.current().ajax().update("dialogs:subTotal");
-			PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+			PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
+			PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO BLUR UNIDADES ",e);
 		}
 	}
-	
-	public void saveProduct() {
+
+	public void saveEstampados(){
+		try{
+
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR EN EL DETALLE DE ESTAMPADOS",e);
+		}
+	}
+
+	public void saveProduct(String option) {
 		try {
 			if (!editMode) {
-				if (this.validatePreSendBill()) {
+				if (this.validatePreSendBill(option)) {
 					//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
-					detailSelected.setFecha(new Date());
-					this.bill.getLstDetailBill().add(detailSelected);
-					this.bill.setTotal(bill.getTotal().add(this.detailSelected.getSubValorFactura()));
+					if(option.equals("E")){
+						detailSelected_estampado.setFecha(new Date());
+						detailSelected_estampado.setTipo("E");
+						this.bill.getLstDetailBill().add(detailSelected_estampado);
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected_estampado.getSubValorFactura()));
+					}else if (option.equals("C")){
+						detailSelected_confecciones.setFecha(new Date());
+						detailSelected_confecciones.setTipo("C");
+						this.bill.getLstDetailBill().add(detailSelected_confecciones);
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected_confecciones.getSubValorFactura()));
+					}else{
+						detailSelected.setFecha(new Date());
+						detailSelected.setTipo("B");
+						this.bill.getLstDetailBill().add(detailSelected);
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected.getSubValorFactura()));
+					}
 					PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 					PrimeFaces.current().ajax().update("billForm:total");
 				}else {
@@ -260,10 +337,20 @@ public class BillController implements Serializable{
 	}
 	
 	
-	private Boolean validatePreSendBill() {
+	private Boolean validatePreSendBill(String option) {
 		try {
-			if(this.detailSelected.getValorFinal()==null || this.detailSelected.getUnidades()== null) {
-				return false;
+			if("E".equals(option)){
+				if(this.detailSelected_estampado.getValorFinal()==null || this.detailSelected_estampado.getUnidades()== null) {
+					return false;
+				}
+			}else if("C".equals(option)){
+				if(this.detailSelected_confecciones.getValorFinal()==null || this.detailSelected_confecciones.getUnidades()== null) {
+					return false;
+				}
+			}else{
+				if(this.detailSelected.getValorFinal()==null || this.detailSelected.getUnidades()== null) {
+					return false;
+				}
 			}
 			return true;
 		}catch (Exception e) {
@@ -318,12 +405,12 @@ public class BillController implements Serializable{
 			this.getCalculatedValues();
 			this.detailSelected.setValorFinal(null);
 			this.detailSelected.setSubValorFactura(null); 
-			PrimeFaces.current().ajax().update("dialogs:totalId");
-			PrimeFaces.current().ajax().update("dialogs:valorFinalId");
-			PrimeFaces.current().ajax().update("dialogs:subTotal");
+			PrimeFaces.current().ajax().update("dialogs:idTabView:totalId");
+			PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
+			PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
 			setDisabledSave(true);
-            PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
-            PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+            PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
+            PrimeFaces.current().ajax().update("dialogs:idTabView:btnCalcular");
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ",e);
 		}
@@ -335,20 +422,20 @@ public class BillController implements Serializable{
 				blurValorUnitario();
 				this.detailSelected.setValorFinal(null);
 				this.detailSelected.setSubValorFactura(null);
-				PrimeFaces.current().ajax().update("dialogs:valorFinalId");
-				PrimeFaces.current().ajax().update("dialogs:subTotal");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
 				setDisabledSave(true);
-				PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
 			}else {
 				this.detailSelected.setValorUnitario(null);
 				this.detailSelected.setTotal(null);
 				this.detailSelected.setValorFinal(null);
-				PrimeFaces.current().ajax().update("dialogs:valorUnitarioId");
-				PrimeFaces.current().ajax().update("dialogs:totalId");
-				PrimeFaces.current().ajax().update("dialogs:valorFinalId");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:valorUnitarioId");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:totalId");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
 				setDisabledSave(true);
-				PrimeFaces.current().ajax().update("dialogs:btnSendFactura");
-				PrimeFaces.current().ajax().update("dialogs:btnCalcular");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
+				PrimeFaces.current().ajax().update("dialogs:idTabView:btnCalcular");
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO BLUR ON PUNTADAS ", e);
@@ -402,4 +489,42 @@ public class BillController implements Serializable{
 		this.disabledSave = disabledSave;
 	}
 
+	public DetailBill getDetailSelected_estampado() {
+		return detailSelected_estampado;
+	}
+	public void setDetailSelected_estampado(DetailBill detailSelected_estampado) {
+		this.detailSelected_estampado = detailSelected_estampado;
+	}
+
+	public Boolean getDisabledSaveEstampados() {
+		return disabledSaveEstampados;
+	}
+
+	public void setDisabledSaveEstampados(Boolean disabledSaveEstampados) {
+		this.disabledSaveEstampados = disabledSaveEstampados;
+	}
+
+	public DetailBill getDetailSelected_confecciones() {
+		return detailSelected_confecciones;
+	}
+
+	public void setDetailSelected_confecciones(DetailBill detailSelected_confecciones) {
+		this.detailSelected_confecciones = detailSelected_confecciones;
+	}
+
+	public Boolean getDisabledSaveConfeccion() {
+		return disabledSaveConfeccion;
+	}
+
+	public void setDisabledSaveConfeccion(Boolean disabledSaveConfeccion) {
+		this.disabledSaveConfeccion = disabledSaveConfeccion;
+	}
+
+	public String getIndexTab() {
+		return indexTab;
+	}
+
+	public void setIndexTab(String indexTab) {
+		this.indexTab = indexTab;
+	}
 }

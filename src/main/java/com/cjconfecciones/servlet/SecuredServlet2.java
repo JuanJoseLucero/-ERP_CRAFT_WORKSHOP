@@ -13,7 +13,7 @@ import java.io.PrintWriter;
 import java.security.Principal;
 
 @WebServlet("/secured")
-@ServletSecurity(httpMethodConstraints = { @HttpMethodConstraint(value = "GET", rolesAllowed = { "Manager" }) })
+//@ServletSecurity(httpMethodConstraints = { @HttpMethodConstraint(value = "GET", rolesAllowed = { "Manager" }) })
 public class SecuredServlet2 extends HttpServlet {
 
     @Override

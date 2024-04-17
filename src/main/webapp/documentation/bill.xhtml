@@ -73,16 +73,45 @@
 					</p:column>
 
 					<p:column exportable="false">
+
 						<p:commandButton icon="pi pi-pencil"
-							update=":dialogs:panel"
+										 update=":dialogs"
+										 oncomplete="PF('manageProductDialog').show()"
+										 styleClass="edit-button rounded-button ui-button-success"
+										 actionListener="#{billController.editModeTrue('E')}"
+										 process="@this"
+										 rendered="#{detalle.tipo eq 'E'}">
+							<f:setPropertyActionListener value="#{detalle}"
+														 target="#{billController.detailSelected_estampado}" />
+							<p:resetInput target=":dialogs" />
+						</p:commandButton>
+
+						<p:commandButton icon="pi pi-pencil"
+										 update=":dialogs"
+										 oncomplete="PF('manageProductDialog').show()"
+										 styleClass="edit-button rounded-button ui-button-success"
+										 actionListener="#{billController.editModeTrue('C')}"
+										 process="@this"
+										 rendered="#{detalle.tipo eq 'C'}">
+							<f:setPropertyActionListener value="#{detalle}"
+														 target="#{billController.detailSelected_confecciones}" />
+							<p:resetInput target=":dialogs" />
+						</p:commandButton>
+
+						<p:commandButton icon="pi pi-pencil"
+							update=":dialogs"
 							oncomplete="PF('manageProductDialog').show()"
 							styleClass="edit-button rounded-button ui-button-success"
-							actionListener="#{billController.editModeTrue}"
-							process="@this">
+							actionListener="#{billController.editModeTrue('B')}"
+							process="@this"
+							rendered="#{detalle.tipo eq 'B'}">
 							<f:setPropertyActionListener value="#{detalle}"
 								target="#{billController.detailSelected}" />
-							<p:resetInput target=":dialogs:panel" />
+							<p:resetInput target=":dialogs" />
 						</p:commandButton>
+
+
+
 					</p:column>
 
 				</p:dataTable>
@@ -125,65 +154,184 @@
 		<h:form id="dialogs">
 			<p:dialog header="Calculadora de puntadas" showEffect="fade"
 				modal="true" widgetVar="manageProductDialog" responsive="true">
-				<p:panelGrid columns="4" id="panel"
-					columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-					layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
-					style="border:0px none; background-color:transparent;">
 
-					<p:outputLabel for="@next" value="Nombre del Bordado" />
-					<p:inputTextarea id="disenioId" rows="3"
-						value="#{billController.detailSelected.descripcion}" />
+				<p:tabView id="idTabView" activeIndex="#{billController.indexTab}">
 
-					<p:outputLabel for="@next" value="Puntadas" />
-					<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()" 
-						onkeypress="pressCalculatorPuntadas(event)"
-						value="#{billController.detailSelected.puntadas}" />
+					<p:tab title="Estampados">
+						<f:facet name="actions">
+							Detalle de estampados
+						</f:facet>
+						<p class="m-0">
+							<p:panelGrid columns="4" id="panelEstampado"
+										 columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										 layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+										 style="border:0px none; background-color:transparent;">
 
-					<p:outputLabel for="@next" value="Valor de la puntada" />
-					<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()" 
-						onkeypress="pressCalculatorValorUnitario(event)" emptyValue=""
-						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
-						value="#{billController.detailSelected.valorUnitario}" />
+								<p:outputLabel for="@next" value="Nombre del Estampado" />
+								<p:inputTextarea id="disenioIdEstampado" rows="3"
+												 value="#{billController.detailSelected_estampado.descripcion}" />
 
-					<p:outputLabel for="@next" value="Total" />
-					<p:inputNumber id="totalId" disabled="true" symbolPosition="s" emptyValue=""
-						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
-						value="#{billController.detailSelected.total}" />
+								<p:outputLabel for="@next" value="Valor Unitario" />
+								<p:inputNumber id="valorFinalIdEstampado" symbolPosition="s" emptyValue=""
+											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+											   onblur="blurSimpleValorUnitario()"
+											   onkeypress="pressSimpleValorUnitario(event)"
+											   value="#{billController.detailSelected_estampado.valorFinal}" />
 
-					<p:outputLabel for="@next" value="Valor Final" />
-					<p:inputNumber id="valorFinalId" symbolPosition="s" emptyValue=""
-						decimalPlaces="2" decimalSeparator="." thousandSeparator=","
-						onkeypress="pressCalculatorValorFinal(event)"
-						value="#{billController.detailSelected.valorFinal}" />
-						
-					<p:outputLabel for="@next" value="Total de prendas" />
-					<p:inputNumber id="unidades" symbolPosition="s"
-						decimalPlaces="0"  onblur="blurValorUnidades()"
-						onkeypress="pressCalculatorUnidades(event)"
-						value="#{billController.detailSelected.unidades}" />
-						
-					<p:outputLabel for="@next" value="SubTotal" />
-					<p:inputNumber id="subTotal" symbolPosition="s"
-						decimalPlaces="0" 
-						value="#{billController.detailSelected.subValorFactura}" />
+								<p:outputLabel for="@next" value="Numero de prendas" />
+								<p:inputNumber id="unidadesEstampado" symbolPosition="s"
+											   decimalPlaces="0"
+											   onblur="blurSimpleValorUnitario()"
+											   onkeypress="pressSimpleValorUnitario(event)"
+											   value="#{billController.detailSelected_estampado.unidades}" />
 
-					<p:row>
-						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
-							actionListener="#{billController.cleanDialog()}" />
-						</p:column>
-						<p:column styleClass="ui-grid-col-4">
-							
-						</p:column>
-						<p:column styleClass="ui-grid-col-4">
-							<p:commandButton id="btnSendFactura" value="Enviar a Factura" 
-								disabled="#{billController.disabledSave}" 
-								styleClass="ui-button-help" actionListener="#{billController.saveProduct}"/>
-						</p:column>
-					</p:row>
-				</p:panelGrid>
+								<p:outputLabel for="@next" value="SubTotal" />
+								<p:inputNumber id="subTotalSimpleEstampado" symbolPosition="s"
+											   decimalPlaces="0"
+											   value="#{billController.detailSelected_estampado.subValorFactura}" />
+
+								<p:row>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnLimpiarEstampado" value="Limpiar" styleClass="ui-button-danger"
+														 actionListener="#{billController.cleanDialog()}" />
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnSendFacturaEstampado" value="Aceptar"
+														 disabled="#{billController.disabledSaveEstampados}"
+														 styleClass="ui-button-help" actionListener="#{billController.saveProduct('E')}"/>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p>
+					</p:tab>
+
+
+					<p:tab title="Confecciones">
+						<f:facet name="actions">
+							Detalle de confecciones
+						</f:facet>
+						<p class="m-0">
+							<p:panelGrid columns="4" id="panelConfecciones"
+										 columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										 layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+										 style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="@next" value="Nombre de la confeccion" />
+								<p:inputTextarea id="disenioIdConfecciones" rows="3"
+												 value="#{billController.detailSelected_confecciones.descripcion}" />
+
+								<p:outputLabel for="@next" value="Valor Unitario" />
+								<p:inputNumber id="valorFinalIdConfeccion" symbolPosition="s" emptyValue=""
+											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+											   onblur="blurSimpleValorUnitarioConfeccion()"
+											   onkeypress="pressSimpleValorUnitarioConfeccion(event)"
+											   value="#{billController.detailSelected_confecciones.valorFinal}" />
+
+								<p:outputLabel for="@next" value="Numero de prendas" />
+								<p:inputNumber id="unidadesConfeccion" symbolPosition="s"
+											   decimalPlaces="0"
+											   onblur="blurSimpleValorUnitarioConfeccion()"
+											   onkeypress="pressSimpleValorUnitarioConfeccion(event)"
+											   value="#{billController.detailSelected_confecciones.unidades}" />
+
+								<p:outputLabel for="@next" value="SubTotal" />
+								<p:inputNumber id="subTotalSimpleConfeccion" symbolPosition="s"
+											   decimalPlaces="0"
+											   value="#{billController.detailSelected_confecciones.subValorFactura}" />
+
+								<p:row>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnLimpiarConfeccion" value="Limpiar" styleClass="ui-button-danger"
+														 actionListener="#{billController.cleanDialog()}" />
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnSendFacturaConfeccion" value="Aceptar"
+														 disabled="#{billController.disabledSaveConfeccion}"
+														 styleClass="ui-button-help" actionListener="#{billController.saveProduct('C')}"/>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p>
+					</p:tab>
+
+
+
+					<p:tab title="Bordados" id="itemTabViewBordados">
+						<f:facet name="actions">
+							Detalle de Bordados
+						</f:facet>
+						<p class="m-0">
+							<p:panelGrid columns="4" id="panel"
+										 columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										 layout="grid" styleClass="ui-panelgrid-blank ui-fluid"
+										 style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="@next" value="Nombre del Bordado" />
+								<p:inputTextarea id="disenioId" rows="3"
+												 value="#{billController.detailSelected.descripcion}" />
+
+								<p:outputLabel for="@next" value="Puntadas" />
+								<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()"
+											   onkeypress="pressCalculatorPuntadas(event)"
+											   value="#{billController.detailSelected.puntadas}" />
+
+								<p:outputLabel for="@next" value="Valor de la puntada" />
+								<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()"
+											   onkeypress="pressCalculatorValorUnitario(event)" emptyValue=""
+											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+											   value="#{billController.detailSelected.valorUnitario}" />
+
+								<p:outputLabel for="@next" value="Total" />
+								<p:inputNumber id="totalId" disabled="true" symbolPosition="s" emptyValue=""
+											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+											   value="#{billController.detailSelected.total}" />
+
+								<p:outputLabel for="@next" value="Valor Final" />
+								<p:inputNumber id="valorFinalId" symbolPosition="s" emptyValue=""
+											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
+											   onkeypress="pressCalculatorValorFinal(event)"
+											   value="#{billController.detailSelected.valorFinal}" />
+
+								<p:outputLabel for="@next" value="Total de prendas" />
+								<p:inputNumber id="unidades" symbolPosition="s"
+											   decimalPlaces="0"  onblur="blurValorUnidades()"
+											   onkeypress="pressCalculatorUnidades(event)"
+											   value="#{billController.detailSelected.unidades}" />
+
+								<p:outputLabel for="@next" value="SubTotal" />
+								<p:inputNumber id="subTotal" symbolPosition="s"
+											   decimalPlaces="0"
+											   value="#{billController.detailSelected.subValorFactura}" />
+
+								<p:row>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
+														 actionListener="#{billController.cleanDialog()}" />
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+
+									</p:column>
+									<p:column styleClass="ui-grid-col-4">
+										<p:commandButton id="btnSendFactura" value="Enviar a Factura"
+														 disabled="#{billController.disabledSave}"
+														 styleClass="ui-button-help" actionListener="#{billController.saveProduct('B')}"/>
+									</p:column>
+								</p:row>
+							</p:panelGrid>
+						</p>
+					</p:tab>
+				</p:tabView>
 			</p:dialog>
-			 
+
+			<p:remoteCommand name="blurSimpleValorUnitario"  process="@form" actionListener="#{billController.blurSimpleValorUnitario('E')}"/>
+			<p:remoteCommand name="blurSimpleValorUnitarioConfeccion"  process="@form" actionListener="#{billController.blurSimpleValorUnitario('C')}"/>
+
 			<p:remoteCommand name="blurPuntadas"  process="@form" actionListener="#{billController.blurPuntadas()}"/>
 			<p:remoteCommand name="blurValorUnitario"  process="@form" actionListener="#{billController.blurValorUnitario()}"/>
 			<p:remoteCommand name="blurValorUnidades"  process="@form" actionListener="#{billController.blurUnidades()}"/>
@@ -192,6 +340,28 @@
 		</h:form>
 		
 		<script type="text/javascript">
+
+
+
+			//*******************************JS ESTAMPAMPADOS - CONFECCION ********************************
+
+		function pressSimpleValorUnitarioConfeccion(event){
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurSimpleValorUnitarioConfeccion();
+					return false;
+			}
+		}
+
+		function pressSimpleValorUnitario(event){
+			if(event.key=='Enter'){
+					event.preventDefault();
+					blurSimpleValorUnitario();
+					return false;
+			}
+		}
+
+		//*******************************FIN JS ESTAMPAMPADOS - CONFECCION ********************************
 		window.addEventListener('beforeunload', function(event) {
 			preDestroy()
 		});

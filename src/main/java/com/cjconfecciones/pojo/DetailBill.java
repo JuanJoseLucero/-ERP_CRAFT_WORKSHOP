@@ -25,4 +25,5 @@ public class DetailBill {
 	private BigDecimal puntadas;
 	private BigDecimal valorFinal;
 	private BigDecimal subValorFactura;
+	private String tipo;
 }
