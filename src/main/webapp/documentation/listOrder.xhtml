@@ -57,8 +57,7 @@
 										 styleClass="edit-button rounded-button ui-button-success"
 										 actionListener="#{listOrderController.preAbono(order.id)}"
 										 oncomplete="PF('listarAbono').show()"
-										 update="dialogs"
-										 process="@this">
+										 update="AbonoForm:abonoIdTable">
 						</p:commandButton>
 					</p:column>
 					
@@ -67,10 +66,21 @@
 			<br />
 		</h:form>
 
-		<h:form id="dialogs" >
-			<p:dialog header="Listar Abono" showEffect="fade"
-					  modal="true" widgetVar="listarAbono" responsive="true">
-				<p:dataTable id="abonoIdTable" var="abono" style ="width: 500px; height: 500px;"
+
+		<p:dialog header="Listar Abono" showEffect="fade"
+				  modal="true" widgetVar="listarAbono" responsive="true">
+			<h:form id="AbonoForm">
+				<p:panelGrid columns="2">
+					<h:outputText value="Abono"/>
+					<p:inputNumber id="valorAbonoId" minValue="1" decimalPlaces="0"
+								   value="#{listOrderController.abonoSelected.valor}"/>
+					<p:commandButton styleClass="ui-button-help" value="Almacenar Abono"
+									 actionListener="#{listOrderController.saveAbono()}"
+									 update="AbonoForm:abonoIdTable">
+					</p:commandButton>
+				</p:panelGrid>
+
+				<p:dataTable id="abonoIdTable" var="abono" style="width: 500px; height: 500px;"
 							 value="#{listOrderController.lstAbonoSelects.abonos}">
 					<p:column headerText="Codigo">
 						<h:outputText value="#{abono.id}"/>
@@ -86,8 +96,8 @@
 						<h:outputText value="#{abono.valor}"/>
 					</p:column>
 				</p:dataTable>
-			</p:dialog>
-		</h:form>
+			</h:form>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

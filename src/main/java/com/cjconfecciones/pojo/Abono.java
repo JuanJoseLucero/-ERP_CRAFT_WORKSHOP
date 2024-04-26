@@ -15,7 +15,7 @@ import java.util.Date;
 public class Abono {
 
     private Integer id;
-    private Date fecha;
+    private String fecha;
     private BigDecimal valor;
     private Integer ccabecera;
 }
