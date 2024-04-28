@@ -1,21 +1,11 @@
 package com.cjconfecciones.controller;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.cjconfecciones.pojo.*;
 import com.cjconfecciones.utils.ApiRestClient;
-
 import com.cjconfecciones.utils.EnumCJ;
 import com.cjconfecciones.utils.Util;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
@@ -23,6 +13,15 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Named
 @ViewScoped
@@ -40,7 +39,8 @@ public class ListOrderController implements Serializable{
 	private  ListOrder orders;
 	private ListAbono lstAbonoSelects;
 	private Abono abonoSelected;
-	private Bill billSelected;
+	private Order orderSelected;
+	private String estadoPago;
 	
 	@PostConstruct
 	public void init() {
@@ -48,7 +48,7 @@ public class ListOrderController implements Serializable{
 			log.info("POST CONSTRUCTOR LISTORDERCONTROLLER");
 			lstAbonoSelects = new ListAbono();
 			abonoSelected = new Abono();
-			billSelected = new Bill();
+			orderSelected = new Order();
 			lstAbonoSelects.setAbonos(new ArrayList<>());
 			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", "");
 		}catch (Exception e) {
@@ -58,16 +58,24 @@ public class ListOrderController implements Serializable{
 
 	public void saveAbono(){
 		try{
-			log.info("Se procede a almacenar un nuevo abono");
+			FacesContext context = FacesContext.getCurrentInstance();
+			BigDecimal totalAbonos = lstAbonoSelects.getAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+			totalAbonos = totalAbonos.add(abonoSelected.getValor());
+			if(totalAbonos.compareTo(orderSelected.getTotal())>0){
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso", "El monto escede el valor total"));
+				return;
+			}
 			SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 			abonoSelected.setFecha(formatter.format(new Date()));
-			abonoSelected.setCcabecera(Integer.parseInt(billSelected.getPedidoId()));
+			abonoSelected.setCcabecera(orderSelected.getId());
 			ResponseCJ responseCJ = apiRestClient.consumeWebServices(ResponseCJ.class, "abono/persistAbono" , util.converterJson(abonoSelected));
 			log.info(responseCJ.getError());
 			if(responseCJ.getError().equals(EnumCJ.OK.getEstado())){
-				this.listarAbono(billSelected.getPedidoId());
+				this.listarAbono(String.valueOf(orderSelected.getId()));
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Abono almacenado"));
+				this.updateEstadoPago();
 			}else{
-				log.info("ERROR AL GUARDAR EL ABONO");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso", "Error al almacenar el abono"));
 			}
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO SAVE ABONO ",e);
@@ -87,7 +95,6 @@ public class ListOrderController implements Serializable{
 
 	public void listarAbono(String orderId){
 		try{
-			billSelected.setPedidoId(orderId);
 			JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
 			jsonObjectBuilder.add("pedidoId",Integer.parseInt(orderId));
 			lstAbonoSelects = apiRestClient.consumeWebServices(ListAbono.class, "abono/getLst4cabecera", jsonObjectBuilder.build().toString());
@@ -103,9 +110,23 @@ public class ListOrderController implements Serializable{
 		}
 	}
 
+	public void updateEstadoPago(){
+		try{
+			BigDecimal totalAbonos = lstAbonoSelects.getAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+			if(totalAbonos.compareTo(orderSelected.getTotal())==0){
+				this.estadoPago="TOTALMENTE CANCELADO";
+			}else{
+				this.estadoPago = "ABONADO";
+			}
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR UPDATE ESTADO PAGO ",e);
+		}
+	}
 	public void preAbono(String orderId) {
 		try {
+			orderSelected = this.orders.getPedidos().stream().filter(pedido -> Integer.parseInt(orderId)==(pedido.getId())).findFirst().orElse(null);
 			this.listarAbono(orderId);
+			this.updateEstadoPago();
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
 		}
@@ -133,5 +154,13 @@ public class ListOrderController implements Serializable{
 
 	public void setAbonoSelected(Abono abonoSelected) {
 		this.abonoSelected = abonoSelected;
+	}
+
+	public String getEstadoPago() {
+		return estadoPago;
+	}
+
+	public void setEstadoPago(String estadoPago) {
+		this.estadoPago = estadoPago;
 	}
 }
