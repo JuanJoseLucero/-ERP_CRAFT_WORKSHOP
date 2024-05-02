@@ -41,6 +41,9 @@ public class ListOrderController implements Serializable{
 	private Abono abonoSelected;
 	private Order orderSelected;
 	private String estadoPago;
+	private BigDecimal saldo;
+	private  BigDecimal totalAbonos;
+
 	
 	@PostConstruct
 	public void init() {
@@ -60,8 +63,8 @@ public class ListOrderController implements Serializable{
 		try{
 			FacesContext context = FacesContext.getCurrentInstance();
 			BigDecimal totalAbonos = lstAbonoSelects.getAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
-			totalAbonos = totalAbonos.add(abonoSelected.getValor());
-			if(totalAbonos.compareTo(orderSelected.getTotal())>0){
+			BigDecimal subTotal = totalAbonos.add(abonoSelected.getValor());
+			if(subTotal.compareTo(orderSelected.getTotal())>0){
 				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso", "El monto escede el valor total"));
 				return;
 			}
@@ -101,6 +104,10 @@ public class ListOrderController implements Serializable{
 			if(EnumCJ.OK.getEstado().equals(lstAbonoSelects.getError())){
 				if(!lstAbonoSelects.getAbonos().isEmpty()){
 					log.info(lstAbonoSelects.getAbonos().size()+"");
+					totalAbonos = lstAbonoSelects.getAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+					saldo =  orderSelected.getTotal().subtract(totalAbonos);
+				}else{
+					saldo =  BigDecimal.ZERO;
 				}
 			}else{
 				log.info("ERROR AL CONSULTA EL ABONO");
@@ -162,5 +169,29 @@ public class ListOrderController implements Serializable{
 
 	public void setEstadoPago(String estadoPago) {
 		this.estadoPago = estadoPago;
+	}
+
+	public BigDecimal getSaldo() {
+		return saldo;
+	}
+
+	public void setSaldo(BigDecimal saldo) {
+		this.saldo = saldo;
+	}
+
+	public BigDecimal getTotalAbonos() {
+		return totalAbonos;
+	}
+
+	public void setTotalAbonos(BigDecimal totalAbonos) {
+		this.totalAbonos = totalAbonos;
+	}
+
+	public Order getOrderSelected() {
+		return orderSelected;
+	}
+
+	public void setOrderSelected(Order orderSelected) {
+		this.orderSelected = orderSelected;
 	}
 }

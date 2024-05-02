@@ -57,7 +57,7 @@
 										 styleClass="edit-button rounded-button ui-button-success"
 										 actionListener="#{listOrderController.preAbono(order.id)}"
 										 oncomplete="PF('listarAbono').show()"
-										 update="AbonoForm:abonoIdTable, AbonoForm:estadoPadoId">
+										 update="AbonoForm:abonoIdTable, AbonoForm:estadoPadoId AbonoForm:saldoId AbonoForm:totalId AbonoForm:pagadoId">
 						</p:commandButton>
 					</p:column>
 					
@@ -76,9 +76,17 @@
 								   value="#{listOrderController.abonoSelected.valor}"/>
 					<p:commandButton styleClass="ui-button-help" value="Almacenar Abono"
 									 actionListener="#{listOrderController.saveAbono()}"
-									 update="AbonoForm:abonoIdTable general:messages AbonoForm:estadoPadoId">
+									 update="AbonoForm:abonoIdTable general:messages AbonoForm:estadoPadoId AbonoForm:saldoId AbonoForm:totalId AbonoForm:pagadoId">
 					</p:commandButton>
 					<h:outputText id="estadoPadoId" value="#{listOrderController.estadoPago}"/>
+
+					Valor Pedido:
+					<h:outputText id="totalId" value="#{listOrderController.orderSelected.total}"/>
+					Valor Pagado:
+					<h:outputText id="pagadoId" value="#{listOrderController.totalAbonos}"/>
+					Saldo:
+					<h:outputText id="saldoId" value="#{listOrderController.saldo}"/>
+
 				</p:panelGrid>
 
 				<p:dataTable id="abonoIdTable" var="abono" style="width: 500px; height: 500px;"
