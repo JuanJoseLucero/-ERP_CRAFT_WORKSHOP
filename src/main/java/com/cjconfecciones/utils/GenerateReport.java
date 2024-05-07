@@ -3,10 +3,12 @@ package com.cjconfecciones.utils;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.cjconfecciones.pojo.DetailBill;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;

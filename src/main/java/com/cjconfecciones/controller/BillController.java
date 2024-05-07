@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import com.cjconfecciones.pojo.ResponseCJ;
 import jakarta.servlet.annotation.HttpMethodConstraint;
 import jakarta.servlet.annotation.ServletSecurity;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 
@@ -142,8 +143,10 @@ public class BillController implements Serializable{
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "EXITOSO", "SE ALMACENO CORRECTAMENTE"));
 					//this.generateBill();
-				    ExternalContext externalContext = context.getExternalContext();
+				    /*ExternalContext externalContext = context.getExternalContext();
 				    externalContext.redirect("listOrder.xhtml");
+				    */
+
 				}else{
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
@@ -377,7 +380,6 @@ public class BillController implements Serializable{
 			
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); // Customize the date format as needed
 	        String dateString = dateFormat.format(bill.getFechaDate());
-					
 			Map<String, Object> parametros = new HashMap<String, Object>();
 			parametros.put("identification", bill.getIdentificacion());
 			parametros.put("name", bill.getNombres());
@@ -387,6 +389,8 @@ public class BillController implements Serializable{
 			parametros.put("description", bill.getLstDetailBill().get(0).getDescripcion());
 			parametros.put("vunits", bill.getLstDetailBill().get(0).getValorUnitario()+"");
 			parametros.put("total", bill.getLstDetailBill().get(0).getTotal()+"");
+			//parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(lstDetailBill));
+			parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(bill.getLstDetailBill()));
 			String billName = "BillNewMethod.pdf";
 			generateReport.generateReport(billName, "/home/jlucero/JaspersoftWorkspace/MyReports/BillPrintCJ.jasper", parametros);
 		}catch (Exception e) {
