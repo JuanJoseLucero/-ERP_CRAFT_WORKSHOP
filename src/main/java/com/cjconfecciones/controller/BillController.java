@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.cjconfecciones.pojo.Abono;
 import com.cjconfecciones.pojo.ResponseCJ;
 import jakarta.servlet.annotation.HttpMethodConstraint;
 import jakarta.servlet.annotation.ServletSecurity;
@@ -388,9 +389,17 @@ public class BillController implements Serializable{
 			parametros.put("units", bill.getLstDetailBill().get(0).getUnidades()+"");
 			parametros.put("description", bill.getLstDetailBill().get(0).getDescripcion());
 			parametros.put("vunits", bill.getLstDetailBill().get(0).getValorUnitario()+"");
-			parametros.put("total", bill.getLstDetailBill().get(0).getTotal()+"");
+			parametros.put("total", bill.getTotal()+"");
+
+			BigDecimal totalAbonos = bill.getLstAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
+			BigDecimal saldo =bill.getTotal().subtract(totalAbonos);
+
+			parametros.put("abonos", totalAbonos+"");
+			parametros.put("saldo", saldo+"");
+
 			//parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(lstDetailBill));
 			parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(bill.getLstDetailBill()));
+			parametros.put("dsAbono",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(bill.getLstAbonos()));
 			String billName = "BillNewMethod.pdf";
 			generateReport.generateReport(billName, "/home/jlucero/JaspersoftWorkspace/MyReports/BillPrintCJ.jasper", parametros);
 		}catch (Exception e) {

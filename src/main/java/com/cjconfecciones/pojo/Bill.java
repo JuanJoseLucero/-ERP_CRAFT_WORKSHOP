@@ -25,4 +25,5 @@ public class Bill {
 	private String telefono;
 	private BigDecimal total;
 	private List<DetailBill> lstDetailBill = new ArrayList<DetailBill>();
+	private List<Abono> lstAbonos = new ArrayList<>();
 }
