@@ -64,6 +64,8 @@ public class BillController implements Serializable{
 	private DetailBill detailSelected_confecciones;
 	private Boolean editMode = false;
 	private String indexTab= "0";
+
+	private String valueAutocomplete;
 	
 	@PostConstruct	
 	private void init() {
@@ -84,7 +86,18 @@ public class BillController implements Serializable{
 			log.log(Level.SEVERE, "ERROR TO INIT CONTROLLER ",e);
 		}
 	}
-	
+
+	public List<String>  methodAutocomplete(){
+		List<String> lstNames = new ArrayList<>();
+		try{
+			lstNames.add("juanjose");
+			lstNames.add("juanjose3");
+		}catch (Exception e){
+			log.log(Level.SEVERE, "error method autocomplete ",e);
+		}
+		return lstNames;
+	}
+
 	public void automaticCalculation() {
 		try {
 			log.info("AUTOMATIC CALCULATION");
@@ -539,5 +552,13 @@ public class BillController implements Serializable{
 
 	public void setIndexTab(String indexTab) {
 		this.indexTab = indexTab;
+	}
+
+	public String getValueAutocomplete() {
+		return valueAutocomplete;
+	}
+
+	public void setValueAutocomplete(String valueAutocomplete) {
+		this.valueAutocomplete = valueAutocomplete;
 	}
 }

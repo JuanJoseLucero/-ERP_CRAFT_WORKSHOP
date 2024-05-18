@@ -10,22 +10,24 @@
     	<h:form id="billForm">
             <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
                 <p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
-                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()"/>
+                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()" autocomplete="off"/>
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
-                <p:inputText id="direccion" value="#{billController.bill.direccion}"/>
+                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off"/>
                 
                 <p:outputLabel for="nombres" value="Nombres:"/>
-                <p:inputText id="nombres" value="#{billController.bill.nombres}"/>
+                <p:inputText id="nombres" value="#{billController.bill.nombres}" autocomplete="off"/>
                 
                 <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
-                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline"/>
+                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off"/>
                 
                 <p:outputLabel for="telefono" value="Telefono:"/>
-                <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
+                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off"/>
                 
                 <p:outputLabel for="total" value="Total"/>
                 <p:inputText id="total" value="#{billController.bill.total}" disabled="true"/>
+
+				<p:autoComplete id="idAutocomplete" value="#{billController.valueAutocomplete}" completeMethod="#{billController.methodAutocomplete()}" />
             </p:panelGrid>
 			<div class="container text-end">
 				<div class="row">
