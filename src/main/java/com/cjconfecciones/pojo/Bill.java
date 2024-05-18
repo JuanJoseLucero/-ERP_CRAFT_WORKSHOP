@@ -23,7 +23,7 @@ public class Bill {
 	private String fecha;
 	private String direccion;
 	private String telefono;
-	private BigDecimal total;
+	private BigDecimal total = BigDecimal.ZERO;
 	private List<DetailBill> lstDetailBill = new ArrayList<DetailBill>();
 	private List<Abono> lstAbonos = new ArrayList<>();
 }

@@ -25,7 +25,7 @@
                 <p:inputText id="telefono" value="#{billController.bill.telefono}"/>
                 
                 <p:outputLabel for="total" value="Total"/>
-                <p:inputText id="total" value="#{billController.bill.total}"/>
+                <p:inputText id="total" value="#{billController.bill.total}" disabled="true"/>
             </p:panelGrid>
 			<div class="container text-end">
 				<div class="row">
@@ -191,7 +191,7 @@
 
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotalSimpleEstampado" symbolPosition="s"
-											   decimalPlaces="0"
+											   decimalPlaces="2" disabled="true"
 											   value="#{billController.detailSelected_estampado.subValorFactura}" />
 
 								<p:row>
@@ -236,14 +236,14 @@
 
 								<p:outputLabel for="@next" value="Numero de prendas" />
 								<p:inputNumber id="unidadesConfeccion" symbolPosition="s"
-											   decimalPlaces="0"
+											   decimalPlaces="2"
 											   onblur="blurSimpleValorUnitarioConfeccion()"
 											   onkeypress="pressSimpleValorUnitarioConfeccion(event)"
 											   value="#{billController.detailSelected_confecciones.unidades}" />
 
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotalSimpleConfeccion" symbolPosition="s"
-											   decimalPlaces="0"
+											   decimalPlaces="2" disabled="true"
 											   value="#{billController.detailSelected_confecciones.subValorFactura}" />
 
 								<p:row>
@@ -310,7 +310,7 @@
 
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotal" symbolPosition="s"
-											   decimalPlaces="0"
+											   decimalPlaces="2" disabled="true"
 											   value="#{billController.detailSelected.subValorFactura}" />
 
 								<p:row>
