@@ -22,4 +22,5 @@ public class Order {
 	private String telefono;
 	private String detalle;
 	private String freal;
+	private String estado;
 }

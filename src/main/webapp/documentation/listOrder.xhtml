@@ -32,16 +32,12 @@
 						<h:outputText value="#{order.nombre}" />
 					</p:column>
 					
-					<p:column headerText="Dirección">
-						<h:outputText value="#{order.direccion}" />
-					</p:column>
-					
-					<p:column headerText="Telefono">
-						<h:outputText value="#{order.telefono}" />
-					</p:column>
-					
 					<p:column headerText="Detalle" filterBy="#{order.nombre}" filterMatchMode="contains">
 						<h:outputText value="#{order.detalle}" />
+					</p:column>
+
+					<p:column headerText="Estado" filterBy="#{order.estado}" filterMatchMode="contains">
+						<h:outputText value="#{order.estado eq 'A' ? 'ABIERTO': order.estado eq 'AB' ? 'ABONADO':'PAGADO'}" />
 					</p:column>
 					
 					<p:column exportable="false">
@@ -72,7 +68,8 @@
 			<h:form id="AbonoForm">
 				<p:panelGrid columns="2">
 					<h:outputText value="Abono"/>
-					<p:inputNumber id="valorAbonoId" minValue="1" decimalPlaces="0"
+					<p:inputNumber id="valorAbonoId" minValue="0.01" decimalPlaces="2"
+								   decimalSeparator="." thousandSeparator=","
 								   value="#{listOrderController.abonoSelected.valor}"/>
 					<p:commandButton styleClass="ui-button-help" value="Almacenar Abono"
 									 actionListener="#{listOrderController.saveAbono()}"
