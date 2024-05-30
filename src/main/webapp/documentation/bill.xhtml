@@ -52,7 +52,7 @@
 			<br />
 			<div class="card">
 				<h5>Detalle de factura</h5>
-				<p:dataTable id="detalleFacturaId" var="detalle"
+				<p:dataTable id="detalleFacturaId" var="detalle" rowIndexVar="rowIndex"
 					value="#{billController.bill.lstDetailBill}">
 
 					<p:column headerText="Fecha">
@@ -115,13 +115,24 @@
 							<p:resetInput target=":dialogs" />
 						</p:commandButton>
 
-
+						<p:commandButton icon="pi pi-trash"
+										 styleClass="edit-button rounded-button ui-button-secondary"
+										 actionListener="#{billController.deleteRow(rowIndex)}"
+										 update="billForm:detalleFacturaId billForm:total"
+										 process="@this">
+							<p:confirm header="Confirmation" message="¿Esta seguro de eliminar este detalle?" icon="pi pi-exclamation-triangle"/>
+						</p:commandButton>
 
 					</p:column>
 
 				</p:dataTable>
 			</div>
 			<br />
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+				<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
+			</p:confirmDialog>
+
 			<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}" process="@this, billForm:identificacion" update=" billForm:nombres, billForm:fecha, billForm:direccion, billForm:telefono"/>
 		</h:form>
         <script>
@@ -192,6 +203,7 @@
 
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotalSimpleEstampado" symbolPosition="s"
+											   decimalSeparator="." thousandSeparator=","
 											   decimalPlaces="2" disabled="true"
 											   value="#{billController.detailSelected_estampado.subValorFactura}" />
 
@@ -245,6 +257,7 @@
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotalSimpleConfeccion" symbolPosition="s"
 											   decimalPlaces="2" disabled="true"
+											   decimalSeparator="." thousandSeparator=","
 											   value="#{billController.detailSelected_confecciones.subValorFactura}" />
 
 								<p:row>
@@ -312,6 +325,7 @@
 								<p:outputLabel for="@next" value="SubTotal" />
 								<p:inputNumber id="subTotal" symbolPosition="s"
 											   decimalPlaces="2" disabled="true"
+											   decimalSeparator="." thousandSeparator=","
 											   value="#{billController.detailSelected.subValorFactura}" />
 
 								<p:row>

@@ -195,7 +195,16 @@ public class BillController implements Serializable{
 		PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
 		PrimeFaces.current().ajax().update("dialogs:btnCalcular");
 	}
-	
+
+	public void deleteRow(int index){
+		try{
+			DetailBill detailAux =  bill.getLstDetailBill().get(index);
+			this.bill.setTotal(bill.getTotal().subtract(detailAux.getSubValorFactura()));
+			bill.getLstDetailBill().remove(index);
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR TO DELETE ROW ",e);
+		}
+	}
 	public void editModeTrue(String options) {
 		this.editMode = true;
 		if("E".equals(options)){
