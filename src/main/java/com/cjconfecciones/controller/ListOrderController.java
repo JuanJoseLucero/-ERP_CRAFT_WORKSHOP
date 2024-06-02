@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
+import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -136,6 +137,26 @@ public class ListOrderController implements Serializable{
 			this.updateEstadoPago();
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
+		}
+	}
+
+	public void deleteOrder(String order){
+		FacesContext context = FacesContext.getCurrentInstance();
+		try{
+			log.info("click check");
+			Bill billAux = new Bill();
+			billAux.setPedidoId(order);
+			ResponseCJ response = apiRestClient.consumeWebServices(ResponseCJ.class, "order/changeStatus",util.converterJson(billAux));
+			log.info(response.getError());
+			if(response.getError().equals(EnumCJ.OK.getEstado())){
+				orders.getPedidos().clear();//jj
+				orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", "");
+				PrimeFaces.current().ajax().update("billForm:ordersIdTable");
+				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "PEDIDO ELIMINADO CORRECTAMENTE"));
+			}
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "INTENTE NUEVAMENTE"));
 		}
 	}
 
