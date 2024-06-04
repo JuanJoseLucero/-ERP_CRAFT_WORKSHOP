@@ -46,8 +46,24 @@
 		</auth-constraint>
 	</security-constraint>
 
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Landing Page</web-resource-name>
+			<url-pattern>/documentation/*</url-pattern>
+			<url-pattern>/jakarta.faces.resource/*</url-pattern>
+			<url-pattern>/css/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>Manager</role-name>
+			<role-name>SimpleUser</role-name>
+		</auth-constraint>
+	</security-constraint>
+
 	<security-role>
 		<role-name>Manager</role-name>
+	</security-role>
+	<security-role>
+		<role-name>SimpleUser</role-name>
 	</security-role>
 
 
