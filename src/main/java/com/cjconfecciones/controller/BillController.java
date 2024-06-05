@@ -64,8 +64,8 @@ public class BillController implements Serializable{
 	private DetailBill detailSelected_confecciones;
 	private Boolean editMode = false;
 	private String indexTab= "0";
-
 	private String valueAutocomplete;
+	private ResponseCJ responseWS;
 	
 	@PostConstruct	
 	private void init() {
@@ -152,7 +152,7 @@ public class BillController implements Serializable{
 				String objecto = util.converterJson(bill);
 				log.info("objecto " .concat(objecto));
 				
-				ResponseCJ responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
+				responseWS =  apiRestClient.consumeWebServices(ResponseCJ.class, "order/new",util.converterJson(bill));
 				if(responseWS.getError().equals("0")){
 					FacesContext context = FacesContext.getCurrentInstance();
 		            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "EXITOSO", "SE ALMACENO CORRECTAMENTE"));
@@ -569,5 +569,13 @@ public class BillController implements Serializable{
 
 	public void setValueAutocomplete(String valueAutocomplete) {
 		this.valueAutocomplete = valueAutocomplete;
+	}
+
+	public ResponseCJ getResponseWS() {
+		return responseWS;
+	}
+
+	public void setResponseWS(ResponseCJ responseWS) {
+		this.responseWS = responseWS;
 	}
 }

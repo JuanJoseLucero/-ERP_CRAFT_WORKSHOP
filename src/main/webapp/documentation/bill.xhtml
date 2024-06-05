@@ -40,11 +40,11 @@
 										 styleClass="rounded-button"></p:commandButton>
 					</div>
 					<div class="col">
-						<p:commandButton value="Guardar" actionListener="#{billController.persistWorkOrder}"
-										 update="general:messages" styleClass="rounded-button ui-button-danger"></p:commandButton>
+						<p:commandButton id="guardarId" value="Guardar" actionListener="#{billController.persistWorkOrder}" disabled="#{billController.responseWS.error != null ||  billController.responseWS.error eq '0'}"
+										 update="general:messages billForm:guardarId billForm:cancelarId" styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 					<div class="col">
-						<p:commandButton value="Imprimir" actionListener="#{billController.generateBill}" ajax="false"
+						<p:commandButton id="cancelarId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false" disabled="#{billController.responseWS == null || billController.responseWS.error eq '1'}"
 										  styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 				</div>
