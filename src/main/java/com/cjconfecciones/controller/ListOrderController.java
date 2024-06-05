@@ -132,6 +132,9 @@ public class ListOrderController implements Serializable{
 	}
 	public void preAbono(String orderId) {
 		try {
+			this.totalAbonos = BigDecimal.ZERO;
+			this.saldo = BigDecimal.ZERO;
+			this.abonoSelected = new Abono();
 			orderSelected = this.orders.getPedidos().stream().filter(pedido -> Integer.parseInt(orderId)==(pedido.getId())).findFirst().orElse(null);
 			this.listarAbono(orderId);
 			this.updateEstadoPago();
