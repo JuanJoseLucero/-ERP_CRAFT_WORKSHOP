@@ -71,8 +71,8 @@
 			<br />
 		</h:form>
 
-
-		<p:dialog header="Listar Abono" showEffect="fade"
+		<p:remoteCommand name="closeWindowsAbono" actionListener="#{listOrderController.closeWindowsAbono()}"/>
+		<p:dialog header="Listar Abono" showEffect="fade" onHide="closeWindowsAbono()"
 				  modal="true" widgetVar="listarAbono" responsive="true">
 			<h:form id="AbonoForm">
 				<p:panelGrid columns="2">

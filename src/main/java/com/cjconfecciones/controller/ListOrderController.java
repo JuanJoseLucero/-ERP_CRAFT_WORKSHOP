@@ -163,6 +163,14 @@ public class ListOrderController implements Serializable{
 		}
 	}
 
+	public void closeWindowsAbono(){
+		try{
+			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", "");
+			PrimeFaces.current().ajax().update("billForm:ordersIdTable");
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
+		}
+	}
 	public ListOrder getOrders() {
 		return orders;
 	}
