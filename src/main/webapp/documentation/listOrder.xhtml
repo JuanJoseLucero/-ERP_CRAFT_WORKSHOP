@@ -15,18 +15,16 @@
 						<span class="mr-2">FECHA INICIO:</span>
 					</div>
 					<div class="col-auto">
-						<p:datePicker id="finicio" class="mr-3"/>
+						<p:datePicker id="finicio" class="mr-3" value="#{listOrderController.finicio}"/>
 					</div>
 					<div class="col-auto">
 						<span class="mr-2">FECHA FIN:</span>
 					</div>
 					<div class="col-auto">
-						<p:datePicker id="ffin" class="mr-3"/>
+						<p:datePicker id="ffin" class="mr-3" value="#{listOrderController.ffin}"/>
 					</div>
-					<div class="col
-
-				-auto">
-						<p:commandButton value="Buscar" icon="pi pi-plus" class="btn btn-success"/>
+					<div class="col-auto">
+						<p:commandButton value="Buscar" icon="pi pi-plus" actionListener="#{listOrderController.filtrar()}" class="btn btn-success"/>
 					</div>
 				</div>
 			</div>

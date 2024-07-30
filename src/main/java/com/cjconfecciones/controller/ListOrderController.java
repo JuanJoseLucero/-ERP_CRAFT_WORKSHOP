@@ -44,8 +44,9 @@ public class ListOrderController implements Serializable{
 	private String estadoPago;
 	private BigDecimal saldo;
 	private  BigDecimal totalAbonos;
+	private Date finicio;
+	private Date ffin;
 
-	
 	@PostConstruct
 	public void init() {
 		try {
@@ -171,6 +172,23 @@ public class ListOrderController implements Serializable{
 			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
 		}
 	}
+
+	public void filtrar(){
+		try{
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+//			log.info(sdf.format(finicio));
+//			log.info(sdf.format(ffin));
+			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+			jsonBuilder.add("finicio", sdf.format(finicio));
+			jsonBuilder.add("ffin", sdf.format(ffin));
+			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", jsonBuilder.build().toString());
+			log.info(orders.getPedidos().size()+"");
+			PrimeFaces.current().ajax().update("billForm:ordersIdTable");
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR TO FILTER ",e);
+		}
+	}
+
 	public ListOrder getOrders() {
 		return orders;
 	}
@@ -225,5 +243,21 @@ public class ListOrderController implements Serializable{
 
 	public void setOrderSelected(Order orderSelected) {
 		this.orderSelected = orderSelected;
+	}
+
+	public Date getFinicio() {
+		return finicio;
+	}
+
+	public void setFinicio(Date finicio) {
+		this.finicio = finicio;
+	}
+
+	public Date getFfin() {
+		return ffin;
+	}
+
+	public void setFfin(Date ffin) {
+		this.ffin = ffin;
 	}
 }
