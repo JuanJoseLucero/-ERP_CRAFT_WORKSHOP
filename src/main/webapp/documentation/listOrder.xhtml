@@ -2,7 +2,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="../dashboard.xhtml">
+	xmlns:p="http://primefaces.org/ui" template="../dashboard.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
 	<h1>Lista de Ordenes</h1>
 	<ui:define name="content">
@@ -32,8 +33,8 @@
 						<h:outputText value="#{order.nombre}" />
 					</p:column>
 					
-					<p:column headerText="Detalle" filterBy="#{order.nombre}" filterMatchMode="contains">
-						<h:outputText value="#{order.detalle}" />
+					<p:column headerText="Detalle" filterBy="#{order.detalle}" filterMatchMode="contains">
+						#{fn:length(order.detalle) > 20 ? fn:substring(order.detalle, 0, 20) :order.detalle}
 					</p:column>
 
 					<p:column headerText="Estado" filterBy="#{order.estado}" filterMatchMode="contains">
