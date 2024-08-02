@@ -175,13 +175,12 @@ public class ListOrderController implements Serializable{
 
 	public void filtrar(){
 		try{
+			log.info("FILTRAR");
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-//			log.info(sdf.format(finicio));
-//			log.info(sdf.format(ffin));
 			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
-			jsonBuilder.add("finicio", sdf.format(finicio));
-			jsonBuilder.add("ffin", sdf.format(ffin));
-			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", jsonBuilder.build().toString());
+			jsonBuilder.add("finicial", sdf.format(finicio));
+			jsonBuilder.add("ffinal", sdf.format(ffin));
+			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders4date", jsonBuilder.build().toString());
 			log.info(orders.getPedidos().size()+"");
 			PrimeFaces.current().ajax().update("billForm:ordersIdTable");
 		}catch (Exception e){
