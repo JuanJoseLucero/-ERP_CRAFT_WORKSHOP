@@ -18,7 +18,10 @@ import org.primefaces.PrimeFaces;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -57,9 +60,22 @@ public class ListOrderController implements Serializable{
 			abonoSelected = new Abono();
 			orderSelected = new Order();
 			lstAbonoSelects.setAbonos(new ArrayList<>());
-			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", "");
+			searchOrdersInit();
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR WHEN INICIALIZATE ORDER ",e);
+		}
+	}
+
+	private void searchOrdersInit() {
+		try {
+			finicio = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(finicio);
+			calendar.add(Calendar.MONTH, -1);
+			ffin = calendar.getTime();
+			filtrar();
+		}catch (Exception e){
+			log.log(Level.SEVERE, "ERROR TO SEARCH ORDERS ",e);
 		}
 	}
 
