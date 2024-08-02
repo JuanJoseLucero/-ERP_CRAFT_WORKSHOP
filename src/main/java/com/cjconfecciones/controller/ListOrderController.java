@@ -30,15 +30,12 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class ListOrderController implements Serializable{
-	
 	@Inject
 	private ApiRestClient apiRestClient;
-	
 	@Inject
 	private SessionController sessionController;
 	@Inject
 	private Util util;
-	
 	Logger log = Logger.getLogger(ListOrderController.class.getName());
 	private  ListOrder orders;
 	private ListAbono lstAbonoSelects;
@@ -193,7 +190,10 @@ public class ListOrderController implements Serializable{
 
 	public void filtrar(){
 		try{
-			log.info("FILTRAR");
+			if(finicio==null||ffin==null){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "TODOS LOS CAMPOS SON NECESARIOS"));
+				return;
+			}
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 			jsonBuilder.add("finicial", sdf.format(finicio));

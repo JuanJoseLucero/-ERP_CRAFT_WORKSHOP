@@ -24,7 +24,8 @@
 						<p:datePicker id="ffin" class="mr-3" value="#{listOrderController.ffin}"/>
 					</div>
 					<div class="col-auto">
-						<p:commandButton value="Buscar" icon="pi pi-plus" actionListener="#{listOrderController.filtrar()}" class="btn btn-success"/>
+						<p:commandButton value="Buscar" icon="pi pi-plus" actionListener="#{listOrderController.filtrar()}"
+										 class="btn btn-success" update="general:messages"/>
 					</div>
 				</div>
 			</div>
