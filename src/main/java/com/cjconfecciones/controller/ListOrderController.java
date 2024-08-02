@@ -47,6 +47,8 @@ public class ListOrderController implements Serializable{
 	private Date finicio;
 	private Date ffin;
 
+	private String msgAlert;
+
 	@PostConstruct
 	public void init() {
 		try {
@@ -181,6 +183,11 @@ public class ListOrderController implements Serializable{
 			jsonBuilder.add("finicial", sdf.format(finicio));
 			jsonBuilder.add("ffinal", sdf.format(ffin));
 			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders4date", jsonBuilder.build().toString());
+			if(orders.getPedidos().isEmpty()){
+				msgAlert="NO SE HAN ENCONTRADO PEDIDOS PARA ESE RANGO DE FECHAS";
+				PrimeFaces.current().ajax().update("notificationId");
+				PrimeFaces.current().executeScript("PF('notificacionDlg').show()");
+			}
 			log.info(orders.getPedidos().size()+"");
 			PrimeFaces.current().ajax().update("billForm:ordersIdTable");
 		}catch (Exception e){
@@ -258,5 +265,13 @@ public class ListOrderController implements Serializable{
 
 	public void setFfin(Date ffin) {
 		this.ffin = ffin;
+	}
+
+	public String getMsgAlert() {
+		return msgAlert;
+	}
+
+	public void setMsgAlert(String msgAlert) {
+		this.msgAlert = msgAlert;
 	}
 }

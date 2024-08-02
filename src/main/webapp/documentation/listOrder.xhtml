@@ -142,5 +142,14 @@
 			</h:form>
 		</p:dialog>
 
+		<p:dialog id="notificationId" header="NOTIFICACIÓN" widgetVar="notificacionDlg" minHeight="40" width="350" showEffect="fade" focus="btnYes" closeOnEscape="true">
+			<p class="m-0">
+				#{listOrderController.msgAlert}
+			</p>
+			<f:facet name="footer">
+				<p:commandButton id="btnYes" type="button" value="ACEPTAR" styleClass="ui-button-flat mr-2" style="width: 6rem" onclick="PF('notificacionDlg').hide()" />
+			</f:facet>
+		</p:dialog>
+
 	</ui:define>
 </ui:composition>
