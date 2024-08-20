@@ -65,12 +65,20 @@ public class ListOrderController implements Serializable{
 
 	private void searchOrdersInit() {
 		try {
+			ffin = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(ffin);
+			calendar.add(Calendar.MONTH, -1);
+			finicio = calendar.getTime();
+			filtrar();
+			/**
 			finicio = new Date();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(finicio);
 			calendar.add(Calendar.MONTH, -1);
 			ffin = calendar.getTime();
 			filtrar();
+			 */
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO SEARCH ORDERS ",e);
 		}
