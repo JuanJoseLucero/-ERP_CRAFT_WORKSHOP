@@ -1,10 +1,14 @@
 package com.cjconfecciones.utils;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -46,10 +50,19 @@ public class ApiRestClient implements Serializable{
 				HttpEntity entity = responsePeticion.getEntity();
 				String jsonResponse = entity !=null ? EntityUtils.toString(entity):"";
 				log.info("RESPUESTA ".concat(jsonResponse));
-				Type tipoRespuesta =  TypeToken.getParameterized(classResponse).getType();
-				response = new Gson().fromJson(jsonResponse	,tipoRespuesta);
+				if (classResponse.equals(JsonObject.class)) {
+					// Si pides JsonObject, usamos el Parser directamente para evitar errores de Type
+					try (JsonReader jsonReader = Json.createReader(new StringReader(jsonResponse))) {
+						response = (T) jsonReader.readObject();
+					}
+				} else {
+					// Para cualquier otra clase POJO
+					response = new Gson().fromJson(jsonResponse, classResponse);
+				}
+//				Type tipoRespuesta =  TypeToken.getParameterized(classResponse).getType();
+//				response = new Gson().fromJson(jsonResponse	,tipoRespuesta);
 			}else {
-				log.info("ERROR CODE HTTP");
+				log.info("ERROR CODE HTTP ".concat(responsePeticion.getStatusLine().getStatusCode()+""));
 			}
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO CONSUME WS ",e);

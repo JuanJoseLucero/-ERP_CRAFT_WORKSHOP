@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.cjconfecciones.pojo.Abono;
 import com.cjconfecciones.pojo.ResponseCJ;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 import jakarta.servlet.annotation.HttpMethodConstraint;
 import jakarta.servlet.annotation.ServletSecurity;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -34,6 +37,7 @@ import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
+import org.primefaces.event.SelectEvent;
 
 
 @Named
@@ -87,15 +91,36 @@ public class BillController implements Serializable{
 		}
 	}
 
-	public List<String>  methodAutocomplete(){
+	public List<String>  methodAutocomplete(String query){
 		List<String> lstNames = new ArrayList<>();
 		try{
-			lstNames.add("juanjose");
-			lstNames.add("juanjose3");
+			this.bill.setNombres(query);
+			JsonObject responseAutocomplete = apiRestClient.consumeWebServices(JsonObject.class, "test/search4name", util.converterJson(bill));
+			if(responseAutocomplete.getString("error").equals("0")){
+				JsonArray listaNombres = responseAutocomplete.getJsonArray("nombres");
+				log.info(listaNombres.size()+"");
+
+				List<String> names = listaNombres.getValuesAs(JsonObject.class)
+						.stream()
+						.map(persona -> persona.getString("nombre"))
+						.collect(Collectors.toList());
+				return names;
+			}else{
+				return new ArrayList<>();
+			}
 		}catch (Exception e){
 			log.log(Level.SEVERE, "error method autocomplete ",e);
 		}
 		return lstNames;
+	}
+
+	public void onItemSelect(SelectEvent<String> event) {
+		String nombreSeleccionado = event.getObject();
+
+		log.info("El usuario seleccionó: " + nombreSeleccionado);
+
+		// Aquí llamas al método específico que necesites
+		//miMetodoEspecial(nombreSeleccionado);
 	}
 
 	public void automaticCalculation() {

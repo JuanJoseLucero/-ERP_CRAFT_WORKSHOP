@@ -14,9 +14,13 @@
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
                 <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off"/>
-                
+
                 <p:outputLabel for="nombres" value="Nombres:"/>
-                <p:inputText id="nombres" value="#{billController.bill.nombres}" autocomplete="off"/>
+				<p:autoComplete id="nombres" value="#{billController.bill.nombres}"
+								completeMethod="#{billController.methodAutocomplete}" scrollHeight="250">
+					<p:ajax event="itemSelect"
+							listener="#{billController.onItemSelect}"/>
+				</p:autoComplete>
                 
                 <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
                 <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off"/>
@@ -44,7 +48,7 @@
 										 update="general:messages billForm:guardarId billForm:imprimirId" styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 					<div class="col">
-						<p:commandButton id="imprimirId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false" disabled="#{billController.responseWS == null || billController.responseWS.error eq '1'}"
+						<p:commandButton id="imprimirId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false" disabled="#{billController.responseWS == null || billController.responseWS.error eq '1' }"
 										  styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 				</div>

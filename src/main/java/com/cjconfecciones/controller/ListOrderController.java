@@ -115,7 +115,7 @@ public class ListOrderController implements Serializable{
 			sessionController.getBillSesion().setPedidoId(orderId);
 			FacesContext context = FacesContext.getCurrentInstance();
 		    ExternalContext externalContext = context.getExternalContext();
-		    externalContext.redirect("bill.xhtml");
+		    externalContext.redirect("bill.jsf");
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
 		}
