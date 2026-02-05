@@ -63,6 +63,7 @@ public class BillController implements Serializable{
 	
 	Logger log = Logger.getLogger(BillController.class.getName());
 	private Bill bill = new Bill();
+	private Bill billAutocomplete = new Bill();
 	private DetailBill detailSelected;
 	private DetailBill detailSelected_estampado;
 	private DetailBill detailSelected_confecciones;
@@ -91,7 +92,7 @@ public class BillController implements Serializable{
 		}
 	}
 
-	public List<String>  methodAutocomplete(String query){
+	public List<Bill>  methodAutocomplete(String query){
 		List<String> lstNames = new ArrayList<>();
 		try{
 			this.bill.setNombres(query);
@@ -100,27 +101,28 @@ public class BillController implements Serializable{
 				JsonArray listaNombres = responseAutocomplete.getJsonArray("nombres");
 				log.info(listaNombres.size()+"");
 
-				List<String> names = listaNombres.getValuesAs(JsonObject.class)
-						.stream()
-						.map(persona -> persona.getString("nombre"))
+				return listaNombres.getValuesAs(JsonObject.class).stream()
+						.map(persona -> Bill.builder().identificacion(persona.getString("cedula"))
+								.nombres(persona.getString("nombre"))
+								.direccion(persona.getString("direccion"))
+								.telefono(persona.getString("telefono"))
+								.lstDetailBill(new ArrayList<>())
+								.total(BigDecimal.ZERO).build())
 						.collect(Collectors.toList());
-				return names;
 			}else{
 				return new ArrayList<>();
 			}
 		}catch (Exception e){
 			log.log(Level.SEVERE, "error method autocomplete ",e);
 		}
-		return lstNames;
+		return null;
 	}
 
-	public void onItemSelect(SelectEvent<String> event) {
-		String nombreSeleccionado = event.getObject();
-
-		log.info("El usuario seleccionó: " + nombreSeleccionado);
-
-		// Aquí llamas al método específico que necesites
-		//miMetodoEspecial(nombreSeleccionado);
+	public void onItemSelect(SelectEvent<Bill> event) {
+		bill.setIdentificacion(billAutocomplete.getIdentificacion());
+		bill.setNombres(billAutocomplete.getNombres());
+		bill.setDireccion(billAutocomplete.getDireccion());
+		bill.setTelefono(billAutocomplete.getTelefono());
 	}
 
 	public void automaticCalculation() {
@@ -144,11 +146,9 @@ public class BillController implements Serializable{
 	public void  searchClient() {
 		log.info("objecto " .concat(util.converterJson(bill)));
 		Bill responseWS =  apiRestClient.consumeWebServices(Bill.class, "order/searchClient",util.converterJson(bill));
-		//log.info(responseWS.getNombres());
-		//this.bill.setDireccion(responseWS.getDireccion());
 		if(responseWS.getIdentificacion()!=null) {
 			this.bill = responseWS;
-			//this.bill.setTotal(BigDecimal.ZERO);
+			this.billAutocomplete.setNombres(bill.getNombres());
 		}
 	}
 	
@@ -602,5 +602,13 @@ public class BillController implements Serializable{
 
 	public void setResponseWS(ResponseCJ responseWS) {
 		this.responseWS = responseWS;
+	}
+
+	public Bill getBillAutocomplete() {
+		return billAutocomplete;
+	}
+
+	public void setBillAutocomplete(Bill billAutocomplete) {
+		this.billAutocomplete = billAutocomplete;
 	}
 }

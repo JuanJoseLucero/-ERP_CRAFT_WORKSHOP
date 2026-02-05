@@ -16,10 +16,11 @@
                 <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off"/>
 
                 <p:outputLabel for="nombres" value="Nombres:"/>
-				<p:autoComplete id="nombres" value="#{billController.bill.nombres}"
-								completeMethod="#{billController.methodAutocomplete}" scrollHeight="250">
+				<p:autoComplete id="nombres" value="#{billController.billAutocomplete}" completeMethod="#{billController.methodAutocomplete}"
+					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter">
 					<p:ajax event="itemSelect"
-							listener="#{billController.onItemSelect}"/>
+				        listener="#{billController.onItemSelect}"
+					    update ="billForm:identificacion billForm:direccion billForm:telefono"/>
 				</p:autoComplete>
                 
                 <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
