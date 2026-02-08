@@ -49,7 +49,7 @@
 										 update="general:messages billForm:guardarId billForm:imprimirId" styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 					<div class="col">
-						<p:commandButton id="imprimirId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false" disabled="#{billController.responseWS == null || billController.responseWS.error eq '1' }"
+						<p:commandButton id="imprimirId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false"
 										  styleClass="rounded-button ui-button-danger"></p:commandButton>
 					</div>
 				</div>
@@ -75,7 +75,7 @@
 					</p:column>
 					
 					<p:column headerText="Valor Unitario">
-						<h:outputText value="#{detalle.valorFinal}" />
+						<h:outputText value="#{detalle.tipo eq 'B' ? detalle.valorDisenioFinal : detalle.valorFinal}" />
 					</p:column>
 					
 					<p:column id="cellValorTotalId" headerText="Valor Total">
@@ -308,18 +308,18 @@
 								<p:inputNumber id="valorUnitarioId" symbolPosition="s" onblur="blurValorUnitario()"
 											   onkeypress="pressCalculatorValorUnitario(event)" emptyValue=""
 											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
-											   value="#{billController.detailSelected.valorUnitario}" />
+											   value="#{billController.detailSelected.valorPuntada}" />
 
-								<p:outputLabel for="@next" value="Total" />
+								<p:outputLabel for="@next" value="Valor del diseño calculado" />
 								<p:inputNumber id="totalId" disabled="true" symbolPosition="s" emptyValue=""
 											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
-											   value="#{billController.detailSelected.total}" />
+											   value="#{billController.detailSelected.valorDisenioCalculado}" />
 
-								<p:outputLabel for="@next" value="Valor Final" />
+								<p:outputLabel for="@next" value="Valor del diseño final" />
 								<p:inputNumber id="valorFinalId" symbolPosition="s" emptyValue=""
 											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 											   onkeypress="pressCalculatorValorFinal(event)"
-											   value="#{billController.detailSelected.valorFinal}" />
+											   value="#{billController.detailSelected.valorDisenioFinal}" />
 
 								<p:outputLabel for="@next" value="Total de prendas" />
 								<p:inputNumber id="unidades" symbolPosition="s"

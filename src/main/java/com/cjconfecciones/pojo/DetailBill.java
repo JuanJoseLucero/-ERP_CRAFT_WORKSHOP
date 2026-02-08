@@ -17,12 +17,15 @@ public class DetailBill {
 	private Integer id;
 	private BigDecimal unidades;
 	private String descripcion;
-	private BigDecimal valorUnitario;
-	private BigDecimal valorUnitarioFinal;
+	private BigDecimal puntadas;
+	private BigDecimal valorPuntada;
+	private BigDecimal valorDisenioCalculado;
+	private BigDecimal valorDisenioFinal;
 	private BigDecimal total;
 	private Date fecha;
 	private String fechaCadena;
-	private BigDecimal puntadas;
+
+	/** campos sirven tanto para confecciones como para estamapados**/
 	private BigDecimal valorFinal;
 	private BigDecimal subValorFactura;
 	private String tipo;

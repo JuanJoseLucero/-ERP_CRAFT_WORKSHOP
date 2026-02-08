@@ -262,8 +262,8 @@ public class BillController implements Serializable{
         try{
             log.info("entro a get calculator valores");
             //if(validationsFields()){
-            	if(detailSelected.getPuntadas()!=null&&detailSelected.getValorUnitario()!=null) {
-            		this.detailSelected.setTotal((detailSelected.getPuntadas().multiply(detailSelected.getValorUnitario())).divide(new BigDecimal("1000")) );
+            	if(detailSelected.getPuntadas()!=null&&detailSelected.getValorPuntada()!=null) {
+            		this.detailSelected.setValorDisenioCalculado((detailSelected.getPuntadas().multiply(detailSelected.getValorPuntada())).divide(new BigDecimal("1000")) );
                     setDisabledSave(false);
                     PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
             	}
@@ -319,7 +319,11 @@ public class BillController implements Serializable{
 	public void blurUnidades() {
 		try {
 			//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
-			detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			if(detailSelected.getValorFinal()!=null){
+				detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			}else{
+				detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorDisenioFinal()));
+			}
 			setDisabledSave(false);
 			PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
 			PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
@@ -399,7 +403,7 @@ public class BillController implements Serializable{
 					return false;
 				}
 			}else{
-				if(this.detailSelected.getValorFinal()==null || this.detailSelected.getUnidades()== null) {
+				if(this.detailSelected.getValorDisenioFinal()==null || this.detailSelected.getUnidades()== null) {
 					return false;
 				}
 			}
@@ -435,7 +439,7 @@ public class BillController implements Serializable{
 			parametros.put("direction", bill.getDireccion());
 			parametros.put("units", bill.getLstDetailBill().get(0).getUnidades()+"");
 			parametros.put("description", bill.getLstDetailBill().get(0).getDescripcion());
-			parametros.put("vunits", bill.getLstDetailBill().get(0).getValorUnitario()+"");
+			parametros.put("vunits", bill.getLstDetailBill().get(0).getValorPuntada()+"");
 			parametros.put("total", bill.getTotal()+"");
 
 			BigDecimal totalAbonos = bill.getLstAbonos().stream().map(Abono::getValor).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -478,7 +482,7 @@ public class BillController implements Serializable{
 	
 	public void blurPuntadas() {
 		try {
-			if(this.detailSelected.getValorUnitario()!=null&&this.detailSelected.getTotal()!=null ) {
+			if(this.detailSelected.getValorPuntada()!=null&&this.detailSelected.getTotal()!=null ) {
 				blurValorUnitario();
 				this.detailSelected.setValorFinal(null);
 				this.detailSelected.setSubValorFactura(null);
@@ -487,9 +491,9 @@ public class BillController implements Serializable{
 				setDisabledSave(true);
 				PrimeFaces.current().ajax().update("dialogs:idTabView:btnSendFactura");
 			}else {
-				this.detailSelected.setValorUnitario(null);
-				this.detailSelected.setTotal(null);
-				this.detailSelected.setValorFinal(null);
+				this.detailSelected.setValorPuntada(null);
+				this.detailSelected.setValorDisenioCalculado(null);
+				this.detailSelected.setValorDisenioFinal(null);
 				PrimeFaces.current().ajax().update("dialogs:idTabView:valorUnitarioId");
 				PrimeFaces.current().ajax().update("dialogs:idTabView:totalId");
 				PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
