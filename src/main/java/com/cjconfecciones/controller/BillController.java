@@ -16,9 +16,6 @@ import com.cjconfecciones.pojo.Abono;
 import com.cjconfecciones.pojo.ResponseCJ;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import jakarta.servlet.annotation.HttpMethodConstraint;
-import jakarta.servlet.annotation.ServletSecurity;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.CellEditEvent;
 
@@ -29,14 +26,12 @@ import com.cjconfecciones.utils.GenerateReport;
 import com.cjconfecciones.utils.Util;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.security.enterprise.authentication.mechanism.http.OpenIdAuthenticationMechanismDefinition;
 import org.primefaces.event.SelectEvent;
 
 
@@ -82,6 +77,7 @@ public class BillController implements Serializable{
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 				billSaved.setFechaDate(sdf.parse(billSaved.getFecha()));
 				bill = billSaved;
+				billAutocomplete.setNombres(bill.getNombres());
 			}else {
 				this.bill.setTotal(BigDecimal.ZERO);
 			}
@@ -224,7 +220,7 @@ public class BillController implements Serializable{
 	public void deleteRow(int index){
 		try{
 			DetailBill detailAux =  bill.getLstDetailBill().get(index);
-			this.bill.setTotal(bill.getTotal().subtract(detailAux.getSubValorFactura()));
+			this.bill.setTotal(bill.getTotal().subtract(detailAux.getSubTotal()));
 			bill.getLstDetailBill().remove(index);
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO DELETE ROW ",e);
@@ -292,19 +288,19 @@ public class BillController implements Serializable{
 	public void blurSimpleValorUnitario(String option){
 		try{
 			if ("C".equals(option)){
-				detailSelected_confecciones.setSubValorFactura(detailSelected_confecciones.getValorFinal().multiply(detailSelected_confecciones.getUnidades()!=null?detailSelected_confecciones.getUnidades():BigDecimal.ZERO));
+				detailSelected_confecciones.setSubTotal(detailSelected_confecciones.getValorUnitario().multiply(detailSelected_confecciones.getUnidades()!=null?detailSelected_confecciones.getUnidades():BigDecimal.ZERO));
 				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotalSimpleConfeccion");
-				if(detailSelected_confecciones.getSubValorFactura()!=null &&
-						detailSelected_confecciones.getSubValorFactura().compareTo(BigDecimal.ZERO)>0){
+				if(detailSelected_confecciones.getSubTotal()!=null &&
+						detailSelected_confecciones.getSubTotal().compareTo(BigDecimal.ZERO)>0){
 					this.disabledSaveConfeccion  =false;
 				}else{
 					this.disabledSaveConfeccion = true;
 				}
 			}else{
-				detailSelected_estampado.setSubValorFactura(detailSelected_estampado.getValorFinal().multiply(detailSelected_estampado.getUnidades()!=null?detailSelected_estampado.getUnidades():BigDecimal.ZERO));
+				detailSelected_estampado.setSubTotal(detailSelected_estampado.getValorUnitario().multiply(detailSelected_estampado.getUnidades()!=null?detailSelected_estampado.getUnidades():BigDecimal.ZERO));
 				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotalSimpleEstampado");
-				if(detailSelected_estampado.getSubValorFactura()!=null &&
-						detailSelected_estampado.getSubValorFactura().compareTo(BigDecimal.ZERO)>0){
+				if(detailSelected_estampado.getSubTotal()!=null &&
+						detailSelected_estampado.getSubTotal().compareTo(BigDecimal.ZERO)>0){
 					this.disabledSaveEstampados =false;
 				}else{
 					this.disabledSaveEstampados = true;
@@ -319,10 +315,10 @@ public class BillController implements Serializable{
 	public void blurUnidades() {
 		try {
 			//detailSelected.setTotal(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
-			if(detailSelected.getValorFinal()!=null){
-				detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorFinal()));
+			if(detailSelected.getValorUnitario()!=null){
+				detailSelected.setSubTotal(detailSelected.getUnidades().multiply(detailSelected.getValorUnitario()));
 			}else{
-				detailSelected.setSubValorFactura(detailSelected.getUnidades().multiply(detailSelected.getValorDisenioFinal()));
+				detailSelected.setSubTotal(detailSelected.getUnidades().multiply(detailSelected.getValorDisenioFinal()));
 			}
 			setDisabledSave(false);
 			PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
@@ -349,17 +345,17 @@ public class BillController implements Serializable{
 						detailSelected_estampado.setFecha(new Date());
 						detailSelected_estampado.setTipo("E");
 						this.bill.getLstDetailBill().add(detailSelected_estampado);
-						this.bill.setTotal(bill.getTotal().add(this.detailSelected_estampado.getSubValorFactura()));
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected_estampado.getSubTotal()));
 					}else if (option.equals("C")){
 						detailSelected_confecciones.setFecha(new Date());
 						detailSelected_confecciones.setTipo("C");
 						this.bill.getLstDetailBill().add(detailSelected_confecciones);
-						this.bill.setTotal(bill.getTotal().add(this.detailSelected_confecciones.getSubValorFactura()));
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected_confecciones.getSubTotal()));
 					}else{
 						detailSelected.setFecha(new Date());
 						detailSelected.setTipo("B");
 						this.bill.getLstDetailBill().add(detailSelected);
-						this.bill.setTotal(bill.getTotal().add(this.detailSelected.getSubValorFactura()));
+						this.bill.setTotal(bill.getTotal().add(this.detailSelected.getSubTotal()));
 					}
 					PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 					PrimeFaces.current().ajax().update("billForm:total");
@@ -383,7 +379,7 @@ public class BillController implements Serializable{
 		BigDecimal respuesta = BigDecimal.ZERO;
 		try {
 			for(DetailBill detalle : this.bill.getLstDetailBill()) {
-				respuesta = respuesta.add(detalle.getSubValorFactura());
+				respuesta = respuesta.add(detalle.getSubTotal());
 			}
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO CALCULATE TOTAL BILL ",e);
@@ -395,11 +391,11 @@ public class BillController implements Serializable{
 	private Boolean validatePreSendBill(String option) {
 		try {
 			if("E".equals(option)){
-				if(this.detailSelected_estampado.getValorFinal()==null || this.detailSelected_estampado.getUnidades()== null) {
+				if(this.detailSelected_estampado.getValorUnitario()==null || this.detailSelected_estampado.getUnidades()== null) {
 					return false;
 				}
 			}else if("C".equals(option)){
-				if(this.detailSelected_confecciones.getValorFinal()==null || this.detailSelected_confecciones.getUnidades()== null) {
+				if(this.detailSelected_confecciones.getValorUnitario()==null || this.detailSelected_confecciones.getUnidades()== null) {
 					return false;
 				}
 			}else{
@@ -419,8 +415,8 @@ public class BillController implements Serializable{
 		log.info("valor unitario"+sessionController.getCalculator().getValorUnitario());
 		sessionController.getCalculator().setValorFinal(bill.getLstDetailBill().get(0).getUnidades()
 				.multiply(sessionController.getCalculator().getValorFinal()));
-		bill.getLstDetailBill().get(0).setTotal(sessionController.getCalculator().getValorFinal());
-		log.info(bill.getLstDetailBill().get(0).getTotal() + "");
+		bill.getLstDetailBill().get(0).setSubTotal(sessionController.getCalculator().getValorFinal());
+		log.info(bill.getLstDetailBill().get(0).getSubTotal()+ "");
 		// PrimeFaces.current().ajax().update("billForm:detalleFacturaId");
 
 		// bill.getLstDetailBill().clear();
@@ -467,8 +463,8 @@ public class BillController implements Serializable{
 		try {
 			//this.detailSelected.setTotal(BigDecimal.ZERO);
 			this.getCalculatedValues();
-			this.detailSelected.setValorFinal(null);
-			this.detailSelected.setSubValorFactura(null); 
+			this.detailSelected.setValorUnitario(null);
+			this.detailSelected.setSubTotal(null);
 			PrimeFaces.current().ajax().update("dialogs:idTabView:totalId");
 			PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
 			PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
@@ -482,10 +478,10 @@ public class BillController implements Serializable{
 	
 	public void blurPuntadas() {
 		try {
-			if(this.detailSelected.getValorPuntada()!=null&&this.detailSelected.getTotal()!=null ) {
+			if(this.detailSelected.getValorPuntada()!=null&&this.detailSelected.getSubTotal()!=null ) {
 				blurValorUnitario();
-				this.detailSelected.setValorFinal(null);
-				this.detailSelected.setSubValorFactura(null);
+				this.detailSelected.setValorUnitario(null);
+				this.detailSelected.setSubTotal(null);
 				PrimeFaces.current().ajax().update("dialogs:idTabView:valorFinalId");
 				PrimeFaces.current().ajax().update("dialogs:idTabView:subTotal");
 				setDisabledSave(true);

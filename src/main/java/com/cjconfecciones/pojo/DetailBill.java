@@ -21,12 +21,12 @@ public class DetailBill {
 	private BigDecimal valorPuntada;
 	private BigDecimal valorDisenioCalculado;
 	private BigDecimal valorDisenioFinal;
-	private BigDecimal total;
 	private Date fecha;
 	private String fechaCadena;
+	private BigDecimal idProducto;
 
 	/** campos sirven tanto para confecciones como para estamapados**/
-	private BigDecimal valorFinal;
-	private BigDecimal subValorFactura;
+	private BigDecimal valorUnitario;
+	private BigDecimal subTotal;
 	private String tipo;
 }

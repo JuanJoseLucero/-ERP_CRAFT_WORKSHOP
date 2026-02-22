@@ -10,27 +10,28 @@
     	<h:form id="billForm">
             <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
                 <p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
-                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()" autocomplete="off"/>
+                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()" autocomplete="off"
+							 onkeydown="return stopEnterKey(event);"/>
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
-                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off"/>
+                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
 
                 <p:outputLabel for="nombres" value="Nombres:"/>
 				<p:autoComplete id="nombres" value="#{billController.billAutocomplete}" completeMethod="#{billController.methodAutocomplete}"
-					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter">
+					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter" onkeydown="return stopEnterKey(event);">
 					<p:ajax event="itemSelect"
 				        listener="#{billController.onItemSelect}"
 					    update ="billForm:identificacion billForm:direccion billForm:telefono"/>
 				</p:autoComplete>
                 
                 <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
-                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off"/>
+                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
                 
                 <p:outputLabel for="telefono" value="Telefono:"/>
-                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off"/>
+                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
                 
                 <p:outputLabel for="total" value="Total"/>
-                <p:inputText id="total" value="#{billController.bill.total}" disabled="true"/>
+                <p:inputText id="total" value="#{billController.bill.total}" disabled="true" onkeydown="return stopEnterKey(event);"/>
 
             </p:panelGrid>
 			<div class="container text-end">
@@ -75,11 +76,11 @@
 					</p:column>
 					
 					<p:column headerText="Valor Unitario">
-						<h:outputText value="#{detalle.tipo eq 'B' ? detalle.valorDisenioFinal : detalle.valorFinal}" />
+						<h:outputText value="#{detalle.valorUnitario}" />
 					</p:column>
 					
 					<p:column id="cellValorTotalId" headerText="Valor Total">
-						<h:outputText value="#{detalle.subValorFactura}" />
+						<h:outputText value="#{detalle.subTotal}" />
 					</p:column>
 
 					<p:column exportable="false">
@@ -197,7 +198,7 @@
 											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 											   onblur="blurSimpleValorUnitario()"
 											   onkeypress="pressSimpleValorUnitario(event)"
-											   value="#{billController.detailSelected_estampado.valorFinal}" />
+											   value="#{billController.detailSelected_estampado.valorUnitario}" />
 
 								<p:outputLabel for="@next" value="Numero de prendas" />
 								<p:inputNumber id="unidadesEstampado" symbolPosition="s"
@@ -210,7 +211,7 @@
 								<p:inputNumber id="subTotalSimpleEstampado" symbolPosition="s"
 											   decimalSeparator="." thousandSeparator=","
 											   decimalPlaces="2" disabled="true"
-											   value="#{billController.detailSelected_estampado.subValorFactura}" />
+											   value="#{billController.detailSelected_estampado.subTotal}" />
 
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">
@@ -250,7 +251,7 @@
 											   decimalPlaces="2" decimalSeparator="." thousandSeparator=","
 											   onblur="blurSimpleValorUnitarioConfeccion()"
 											   onkeypress="pressSimpleValorUnitarioConfeccion(event)"
-											   value="#{billController.detailSelected_confecciones.valorFinal}" />
+											   value="#{billController.detailSelected_confecciones.valorUnitario}" />
 
 								<p:outputLabel for="@next" value="Numero de prendas" />
 								<p:inputNumber id="unidadesConfeccion" symbolPosition="s"
@@ -263,7 +264,7 @@
 								<p:inputNumber id="subTotalSimpleConfeccion" symbolPosition="s"
 											   decimalPlaces="2" disabled="true"
 											   decimalSeparator="." thousandSeparator=","
-											   value="#{billController.detailSelected_confecciones.subValorFactura}" />
+											   value="#{billController.detailSelected_confecciones.subTotal}" />
 
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">
@@ -331,7 +332,7 @@
 								<p:inputNumber id="subTotal" symbolPosition="s"
 											   decimalPlaces="2" disabled="true"
 											   decimalSeparator="." thousandSeparator=","
-											   value="#{billController.detailSelected.subValorFactura}" />
+											   value="#{billController.detailSelected.subTotal}" />
 
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">

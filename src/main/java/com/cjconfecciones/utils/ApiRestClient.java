@@ -10,7 +10,9 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -41,7 +43,12 @@ public class ApiRestClient implements Serializable{
 		String url = propiedades.getOrderProperties("apiCore");
 		url = url.concat(resource);
 		T response = null;
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()){
+		HttpHost proxy = new HttpHost("192.168.18.20", 8082);
+		RequestConfig config = RequestConfig.custom()
+				.setProxy(proxy)
+				.build();
+		try (CloseableHttpClient httpClient = HttpClients.custom()
+				.setDefaultRequestConfig(config).build()){
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setHeader("Content-Type", "application/json");
 			httpPost.setEntity(new StringEntity(json));
