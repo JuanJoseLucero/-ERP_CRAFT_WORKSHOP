@@ -36,26 +36,28 @@ public class ApiRestClient implements Serializable{
 	private Propiedades propiedades;
 	
 	Logger log = Logger.getLogger(ApiRestClient.class.getName());
-	
+
 	public <T> T consumeWebServices(Class<T> classResponse, String resource, String json) {
 		//String url = "http://localhost:8080/back/rest/order/new";
 		log.info(json);
 		String url = propiedades.getOrderProperties("apiCore");
 		url = url.concat(resource);
 		T response = null;
+		/*
 		HttpHost proxy = new HttpHost("192.168.18.20", 8082);
 		RequestConfig config = RequestConfig.custom()
 				.setProxy(proxy)
-				.build();
-		try (CloseableHttpClient httpClient = HttpClients.custom()
-				.setDefaultRequestConfig(config).build()){
+				.build();*/
+//		try (CloseableHttpClient httpClient = HttpClients.custom()
+//				.setDefaultRequestConfig(config).build()){
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			HttpPost httpPost = new HttpPost(url);
-			httpPost.setHeader("Content-Type", "application/json");
-			httpPost.setEntity(new StringEntity(json));
-			HttpResponse responsePeticion =  httpClient.execute(httpPost);
-			if(responsePeticion.getStatusLine().getStatusCode() == 200) {
+			httpPost.setHeader("Content-Type", "application/json; charset=UTF-8");
+			httpPost.setEntity(new StringEntity(json, "UTF-8"));
+			HttpResponse responsePeticion = httpClient.execute(httpPost);
+			if (responsePeticion.getStatusLine().getStatusCode() == 200) {
 				HttpEntity entity = responsePeticion.getEntity();
-				String jsonResponse = entity !=null ? EntityUtils.toString(entity):"";
+				String jsonResponse = entity != null ? EntityUtils.toString(entity) : "";
 				log.info("RESPUESTA ".concat(jsonResponse));
 				if (classResponse.equals(JsonObject.class)) {
 					// Si pides JsonObject, usamos el Parser directamente para evitar errores de Type
@@ -68,11 +70,11 @@ public class ApiRestClient implements Serializable{
 				}
 //				Type tipoRespuesta =  TypeToken.getParameterized(classResponse).getType();
 //				response = new Gson().fromJson(jsonResponse	,tipoRespuesta);
-			}else {
-				log.info("ERROR CODE HTTP ".concat(responsePeticion.getStatusLine().getStatusCode()+""));
+			} else {
+				log.info("ERROR CODE HTTP ".concat(responsePeticion.getStatusLine().getStatusCode() + ""));
 			}
-		}catch (Exception e) {
-			log.log(Level.SEVERE, "ERROR TO CONSUME WS ",e);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR TO CONSUME WS ", e);
 		}
 		return response;
 	}

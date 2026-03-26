@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition template="/dashboard.xhtml"
+                xmlns="http://www.w3.org"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core">
+
+    <ui:define name="title">Error de Sesión</ui:define>
+
+    <ui:define name="content">
+        <div class="container mt-5">
+            <div class="alert alert-warning shadow">
+                <h4 class="alert-heading">
+                    <i class="material-icons">history</i> Sesión Expirada
+                </h4>
+                <p>Tu sesión ha caducado por inactividad o la vista ya no es válida.</p>
+                <hr/>
+                <p class="mb-0">
+                    <h:link outcome="/dashboard.jsf" value="Haga clic aquí para recargar el sistema"
+                            styleClass="btn btn-primary text-white" />
+                </p>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

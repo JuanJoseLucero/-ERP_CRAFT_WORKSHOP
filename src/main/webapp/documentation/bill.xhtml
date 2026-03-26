@@ -11,14 +11,16 @@
             <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
                 <p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
                 <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()" autocomplete="off"
-							 onkeydown="return stopEnterKey(event);"/>
+							 onkeydown="return stopEnterKey(event);" onkeyup="this.value = this.value.toUpperCase();"/>
 
                 <p:outputLabel for="direccion" value="Dirección:"/>
-                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
+                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off" onkeydown="return stopEnterKey(event);"
+							 onkeyup="this.value = this.value.toUpperCase();"/>
 
                 <p:outputLabel for="nombres" value="Nombres:"/>
 				<p:autoComplete id="nombres" value="#{billController.billAutocomplete}" completeMethod="#{billController.methodAutocomplete}"
-					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter" onkeydown="return stopEnterKey(event);">
+					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter" onkeydown="return stopEnterKey(event);"
+								onkeyup="this.value = this.value.toUpperCase();">
 					<p:ajax event="itemSelect"
 				        listener="#{billController.onItemSelect}"
 					    update ="billForm:identificacion billForm:direccion billForm:telefono"/>
@@ -28,10 +30,14 @@
                 <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
                 
                 <p:outputLabel for="telefono" value="Telefono:"/>
-                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
+                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off" onkeydown="return stopEnterKey(event);"
+							 onkeyup="this.value = this.value.toUpperCase();"/>
                 
                 <p:outputLabel for="total" value="Total"/>
-                <p:inputText id="total" value="#{billController.bill.total}" disabled="true" onkeydown="return stopEnterKey(event);"/>
+				<p:inputText id="total" value="#{billController.bill.total}" disabled="true" onkeydown="return stopEnterKey(event);"
+							 onkeyup="this.value = this.value.toUpperCase();">
+					<f:convertNumber pattern="#0.00" />
+				</p:inputText>
 
             </p:panelGrid>
 			<div class="container text-end">
@@ -72,15 +78,19 @@
 					</p:column>
 					
 					<p:column headerText="Detalle">
-						<h:outputText value="#{detalle.descripcion}" />
+						<h:outputText value="#{detalle.descripcion}"  onkeyup="this.value = this.value.toUpperCase();"/>
 					</p:column>
 					
 					<p:column headerText="Valor Unitario">
-						<h:outputText value="#{detalle.valorUnitario}" />
+						<h:outputText value="#{detalle.valorUnitario}" >
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" groupingUsed="false" />
+						</h:outputText>
 					</p:column>
 					
 					<p:column id="cellValorTotalId" headerText="Valor Total">
-						<h:outputText value="#{detalle.subTotal}" />
+						<h:outputText value="#{detalle.subTotal}" >
+							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" groupingUsed="false" />
+						</h:outputText>
 					</p:column>
 
 					<p:column exportable="false">
@@ -191,7 +201,8 @@
 
 								<p:outputLabel for="@next" value="Nombre del Estampado" />
 								<p:inputTextarea id="disenioIdEstampado" rows="3"
-												 value="#{billController.detailSelected_estampado.descripcion}" />
+												 value="#{billController.detailSelected_estampado.descripcion}"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
 
 								<p:outputLabel for="@next" value="Valor Unitario" />
 								<p:inputNumber id="valorFinalIdEstampado" symbolPosition="s" emptyValue=""
@@ -244,7 +255,8 @@
 
 								<p:outputLabel for="@next" value="Nombre de la confeccion" />
 								<p:inputTextarea id="disenioIdConfecciones" rows="3"
-												 value="#{billController.detailSelected_confecciones.descripcion}" />
+												 value="#{billController.detailSelected_confecciones.descripcion}"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
 
 								<p:outputLabel for="@next" value="Valor Unitario" />
 								<p:inputNumber id="valorFinalIdConfeccion" symbolPosition="s" emptyValue=""
@@ -298,7 +310,8 @@
 
 								<p:outputLabel for="@next" value="Nombre del Bordado" />
 								<p:inputTextarea id="disenioId" rows="3"
-												 value="#{billController.detailSelected.descripcion}" />
+												 value="#{billController.detailSelected.descripcion}"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
 
 								<p:outputLabel for="@next" value="Puntadas" />
 								<p:inputNumber id="puntadasId" minValue="1" decimalPlaces="0" onblur="blurPuntadas()"

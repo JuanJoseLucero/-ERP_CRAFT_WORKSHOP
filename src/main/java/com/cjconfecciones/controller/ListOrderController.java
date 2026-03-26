@@ -71,14 +71,6 @@ public class ListOrderController implements Serializable{
 			calendar.add(Calendar.MONTH, -1);
 			finicio = calendar.getTime();
 			filtrar();
-			/**
-			finicio = new Date();
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(finicio);
-			calendar.add(Calendar.MONTH, -1);
-			ffin = calendar.getTime();
-			filtrar();
-			 */
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO SEARCH ORDERS ",e);
 		}
@@ -170,16 +162,13 @@ public class ListOrderController implements Serializable{
 	public void deleteOrder(String order){
 		FacesContext context = FacesContext.getCurrentInstance();
 		try{
-			log.info("click check");
 			Bill billAux = new Bill();
 			billAux.setPedidoId(order);
 			ResponseCJ response = apiRestClient.consumeWebServices(ResponseCJ.class, "order/changeStatus",util.converterJson(billAux));
 			log.info(response.getError());
 			if(response.getError().equals(EnumCJ.OK.getEstado())){
-				orders.getPedidos().clear();//jj
-				orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders", "");
-				PrimeFaces.current().ajax().update("billForm:ordersIdTable");
-				context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "OK", "PEDIDO ELIMINADO CORRECTAMENTE"));
+				orders.getPedidos().clear();
+				this.searchOrdersInit();
 			}
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO MOPDIFY ORDER ",e);
