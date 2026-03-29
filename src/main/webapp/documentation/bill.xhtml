@@ -39,6 +39,10 @@
 					<f:convertNumber pattern="#0.00" />
 				</p:inputText>
 
+				<p:outputLabel for="email" value="Email:"/>
+				<p:inputText id="email" value="#{billController.bill.email}" autocomplete="off" onkeydown="return stopEnterKey(event);"
+							 onkeyup="this.value = this.value.toUpperCase();"/>
+
             </p:panelGrid>
 			<div class="container text-end">
 				<div class="row">
