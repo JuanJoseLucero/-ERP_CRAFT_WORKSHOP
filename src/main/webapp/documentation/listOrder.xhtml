@@ -5,93 +5,106 @@
 	xmlns:p="http://primefaces.org/ui" template="../dashboard.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
-	<h1>Lista de Ordenes</h1>
 	<ui:define name="content">
 		<h:form id="billForm">
-			<br/>
-			<div class="container mt-2">
-				<div class="row align-items-center bg-light p-2">
-					<div class="col-auto">
-						<span class="mr-2">FECHA INICIO:</span>
-					</div>
-					<div class="col-auto">
-						<p:datePicker id="finicio" class="mr-3" value="#{listOrderController.finicio}"/>
-					</div>
-					<div class="col-auto">
-						<span class="mr-2">FECHA FIN:</span>
-					</div>
-					<div class="col-auto">
-						<p:datePicker id="ffin" class="mr-3" value="#{listOrderController.ffin}"/>
-					</div>
-					<div class="col-auto">
-						<p:commandButton value="Buscar" icon="pi pi-plus" actionListener="#{listOrderController.filtrar()}"
-										 class="btn btn-success" update="general:messages"/>
+			<div class="container mt-4">
+				<div class="row justify-content-center">
+					<div class="col-12 col-md-12 col-lg-12">
+
+						<!-- FILTROS -->
+						<div class="card shadow-sm">
+							<div class="card-body">
+																<!-- FILTROS -->
+								<div class="row align-items-end g-2 mb-3">
+									<div class="col-12 col-md-auto">
+										<label>FECHA INICIO:</label>
+										<p:datePicker id="finicio" styleClass="form-control"
+													  value="#{listOrderController.finicio}"/>
+									</div>
+
+									<div class="col-12 col-md-auto">
+										<label>FECHA FIN:</label>
+										<p:datePicker id="ffin" styleClass="form-control"
+													  value="#{listOrderController.ffin}"/>
+									</div>
+									<div class="col-12 col-md-auto">
+										<p:commandButton value="Buscar" icon="pi pi-plus"
+														 actionListener="#{listOrderController.filtrar()}"
+														 class="btn btn-success w-100" update="general:messages"/>
+									</div>
+								</div>
+
+								<p:dataTable id="ordersIdTable" var="order"
+											 value="#{listOrderController.orders.pedidos}"
+											 responsiveLayout="scroll"
+											 paginator="true"
+											 rows="5"
+											 paginatorPosition="bottom"
+											 style="table-layout: fixed; width:100%;">
+
+									<p:column headerText="Codigo" style="width: 80px">
+										<h:outputText value="#{order.id}"/>
+									</p:column>
+
+									<p:column headerText="Fecha Real">
+										<h:outputText value="#{order.freal}"/>
+									</p:column>
+
+									<p:column headerText="Fecha de Entrega">
+										<h:outputText value="#{order.fechaEntrega}"/>
+									</p:column>
+
+									<p:column headerText="Total" style="width: 100px">
+										<h:outputText value="#{order.total}"/>
+									</p:column>
+
+									<p:column headerText="Nombre" filterBy="#{order.nombre}" filterMatchMode="contains">
+										<h:outputText value="#{order.nombre}"/>
+									</p:column>
+
+									<p:column headerText="Detalle" filterBy="#{order.detalle}"
+											  filterMatchMode="contains">
+										#{fn:length(order.detalle) > 20 ? fn:substring(order.detalle, 0, 20) :order.detalle}
+									</p:column>
+
+									<p:column headerText="Estado" filterBy="#{order.estado}" filterMatchMode="contains">
+										<h:outputText
+												value="#{order.estado eq 'A' ? 'ABIERTO': order.estado eq 'AB' ? 'ABONADO':'PAGADO'}"/>
+									</p:column>
+
+									<p:column headerText="Acciones" style="width: 120px; text-align:center;"
+											  exportable="false">
+										<div class="d-flex gap-2">
+											<p:commandButton icon="pi pi-pencil"
+															 styleClass=""
+															 actionListener="#{listOrderController.modifyOrder(order.id)}"
+															 process="@this">
+											</p:commandButton>
+
+											<p:commandButton icon="pi pi-money-bill"
+															 styleClass="edit-button rounded-button ui-button-success"
+															 actionListener="#{listOrderController.preAbono(order.id)}"
+															 oncomplete="PF('listarAbono').show()"
+															 update="AbonoForm:abonoIdTable, AbonoForm:estadoPadoId AbonoForm:saldoId AbonoForm:totalId AbonoForm:pagadoId AbonoForm:valorAbonoId">
+											</p:commandButton>
+
+											<p:commandButton icon="pi pi-trash"
+															 styleClass="edit-button rounded-button ui-button-secondary"
+															 actionListener="#{listOrderController.deleteOrder(order.id)}"
+															 update="general:messages">
+												<p:confirm header="Confirmation"
+														   message="¿Esta seguro de eliminar este pedido?"
+														   icon="pi pi-exclamation-triangle"/>
+											</p:commandButton>
+										</div>
+									</p:column>
+
+								</p:dataTable>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
-
-			<div class="card">
-				<br/>
-				<h5>Listado</h5>
-				<p:dataTable id="ordersIdTable" var="order"
-					value="#{listOrderController.orders.pedidos}">
-					<p:column headerText="Codigo">
-						<h:outputText value="#{order.id}" />
-					</p:column>
-					
-					<p:column headerText="Fecha Real" >
-						<h:outputText value="#{order.freal}" />
-					</p:column>
-					
-					<p:column headerText="Fecha de Entrega" >
-						<h:outputText value="#{order.fechaEntrega}"/>
-					</p:column>
-					
-					<p:column headerText="Total">
-						<h:outputText value="#{order.total}" />
-					</p:column>
-					
-					<p:column headerText="Nombre" filterBy="#{order.nombre}" filterMatchMode="contains">
-						<h:outputText value="#{order.nombre}" />
-					</p:column>
-					
-					<p:column headerText="Detalle" filterBy="#{order.detalle}" filterMatchMode="contains">
-						#{fn:length(order.detalle) > 20 ? fn:substring(order.detalle, 0, 20) :order.detalle}
-					</p:column>
-
-					<p:column headerText="Estado" filterBy="#{order.estado}" filterMatchMode="contains">
-						<h:outputText value="#{order.estado eq 'A' ? 'ABIERTO': order.estado eq 'AB' ? 'ABONADO':'PAGADO'}" />
-					</p:column>
-					
-					<p:column exportable="false">
-						<p:commandButton icon="pi pi-pencil"
-							styleClass=""
-							actionListener="#{listOrderController.modifyOrder(order.id)}"
-							process="@this">
-						</p:commandButton>
-					</p:column>
-
-					<p:column exportable="false">
-						<p:commandButton icon="pi pi-money-bill"
-										 styleClass="edit-button rounded-button ui-button-success"
-										 actionListener="#{listOrderController.preAbono(order.id)}"
-										 oncomplete="PF('listarAbono').show()"
-										 update="AbonoForm:abonoIdTable, AbonoForm:estadoPadoId AbonoForm:saldoId AbonoForm:totalId AbonoForm:pagadoId AbonoForm:valorAbonoId">
-						</p:commandButton>
-					</p:column>
-
-					<p:column exportable="false">
-						<p:commandButton icon="pi pi-trash"
-										 styleClass="edit-button rounded-button ui-button-secondary"
-										 actionListener="#{listOrderController.deleteOrder(order.id)}"
-										 update="general:messages">
-							<p:confirm header="Confirmation" message="¿Esta seguro de eliminar este pedido?" icon="pi pi-exclamation-triangle"/>
-						</p:commandButton>
-					</p:column>
-					
-				</p:dataTable>
-			</div>
-			<br />
 		</h:form>
 
 		<p:remoteCommand name="closeWindowsAbono" actionListener="#{listOrderController.closeWindowsAbono()}"/>

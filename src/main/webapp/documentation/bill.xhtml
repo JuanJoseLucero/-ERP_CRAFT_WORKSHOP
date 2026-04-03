@@ -4,157 +4,190 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="../dashboard.xhtml">
-
-    <h1>Calculadora de puntadas</h1>
     <ui:define name="content">
-    	<h:form id="billForm">
-            <p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
-                <p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
-                <p:inputText id="identificacion" value="#{billController.bill.identificacion}" onblur="searchClient()" autocomplete="off"
-							 onkeydown="return stopEnterKey(event);" onkeyup="this.value = this.value.toUpperCase();"/>
+		<div class="container-fluid mt-4">
+			<div class="row justify-content-center">
+				<div class="col-12 col-lg-11">
+					<h:form id="billForm">
+						<div class="row justify-content-center">
+							<div class="col-12 col-md-12 col-lg-12">
+								<p:panelGrid id="headerBill" columns="4" styleClass="panel-grid">
+									<p:outputLabel for="identificacion" value="Cedula o Ruc:"/>
+									<p:inputText id="identificacion" value="#{billController.bill.identificacion}"
+												 onblur="searchClient()" autocomplete="off"
+												 onkeydown="return stopEnterKey(event);"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
 
-                <p:outputLabel for="direccion" value="Dirección:"/>
-                <p:inputText id="direccion" value="#{billController.bill.direccion}" autocomplete="off" onkeydown="return stopEnterKey(event);"
-							 onkeyup="this.value = this.value.toUpperCase();"/>
+									<p:outputLabel for="direccion" value="Dirección:"/>
+									<p:inputText id="direccion" value="#{billController.bill.direccion}"
+												 autocomplete="off"
+												 onkeydown="return stopEnterKey(event);"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
 
-                <p:outputLabel for="nombres" value="Nombres:"/>
-				<p:autoComplete id="nombres" value="#{billController.billAutocomplete}" completeMethod="#{billController.methodAutocomplete}"
-					var = "b" itemLabel = "#{b.nombres}" itemValue="#{b}" converter="billConverter" onkeydown="return stopEnterKey(event);"
-								onkeyup="this.value = this.value.toUpperCase();">
-					<p:ajax event="itemSelect"
-				        listener="#{billController.onItemSelect}"
-					    update ="billForm:identificacion billForm:direccion billForm:telefono"/>
-				</p:autoComplete>
-                
-                <p:outputLabel for="fecha" value="Fecha de Entrega:"/>
-                <p:datePicker id="fecha" value="#{billController.bill.fechaDate}"  mode="inline" autocomplete="off" onkeydown="return stopEnterKey(event);"/>
-                
-                <p:outputLabel for="telefono" value="Telefono:"/>
-                <p:inputText id="telefono" value="#{billController.bill.telefono}" autocomplete="off" onkeydown="return stopEnterKey(event);"
-							 onkeyup="this.value = this.value.toUpperCase();"/>
-                
-                <p:outputLabel for="total" value="Total"/>
-				<p:inputText id="total" value="#{billController.bill.total}" disabled="true" onkeydown="return stopEnterKey(event);"
-							 onkeyup="this.value = this.value.toUpperCase();">
-					<f:convertNumber pattern="#0.00" />
-				</p:inputText>
+									<p:outputLabel for="nombres" value="Nombres:"/>
+									<p:autoComplete id="nombres" value="#{billController.billAutocomplete}"
+													completeMethod="#{billController.methodAutocomplete}"
+													var="b" itemLabel="#{b.nombres}" itemValue="#{b}"
+													converter="billConverter"
+													onkeydown="return stopEnterKey(event);"
+													onkeyup="this.value = this.value.toUpperCase();">
+										<p:ajax event="itemSelect"
+												listener="#{billController.onItemSelect}"
+												update="billForm:identificacion billForm:direccion billForm:telefono"/>
+									</p:autoComplete>
 
-				<p:outputLabel for="email" value="Email:"/>
-				<p:inputText id="email" value="#{billController.bill.email}" autocomplete="off" onkeydown="return stopEnterKey(event);"
-							 onkeyup="this.value = this.value.toUpperCase();"/>
+									<p:outputLabel for="fecha" value="Fecha de Entrega:"/>
+									<p:datePicker id="fecha" value="#{billController.bill.fechaDate}"
+												  autocomplete="off" onkeydown="return stopEnterKey(event);"/>
 
-            </p:panelGrid>
-			<div class="container text-end">
-				<div class="row">
-					<div class="col">
-					</div>
-					<div class="col">
-					</div>
-					<div class="col">
-						<p:commandButton value="Agregar Detalle" actionListener="#{billController.newDetail}"
-										 oncomplete="PF('manageProductDialog').show()" update="dialogs"
-										 styleClass="rounded-button"></p:commandButton>
-					</div>
-					<div class="col">
-						<p:commandButton id="guardarId" value="Guardar" actionListener="#{billController.persistWorkOrder}" disabled="#{billController.responseWS.error != null ||  billController.responseWS.error eq '0'}"
-										 update="general:messages billForm:guardarId billForm:imprimirId" styleClass="rounded-button ui-button-danger"></p:commandButton>
-					</div>
-					<div class="col">
-						<p:commandButton id="imprimirId" value="Imprimir" actionListener="#{billController.generateBill}" ajax="false"
-										  styleClass="rounded-button ui-button-danger"></p:commandButton>
-					</div>
+									<p:outputLabel for="telefono" value="Telefono:"/>
+									<p:inputText id="telefono" value="#{billController.bill.telefono}"
+												 autocomplete="off"
+												 onkeydown="return stopEnterKey(event);"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
+
+									<p:outputLabel for="total" value="Total"/>
+									<p:inputText id="total" value="#{billController.bill.total}" disabled="true"
+												 onkeydown="return stopEnterKey(event);"
+												 onkeyup="this.value = this.value.toUpperCase();">
+										<f:convertNumber pattern="#0.00"/>
+									</p:inputText>
+
+									<p:outputLabel for="email" value="Email:"/>
+									<p:inputText id="email" value="#{billController.bill.email}" autocomplete="off"
+												 onkeydown="return stopEnterKey(event);"
+												 onkeyup="this.value = this.value.toUpperCase();"/>
+
+								</p:panelGrid>
+							</div>
+						</div>
+						<div class="container text-end">
+							<div class="row">
+								<div class="col">
+								</div>
+								<div class="col">
+								</div>
+								<div class="col">
+									<p:commandButton value="Agregar Detalle"
+													 actionListener="#{billController.newDetail}"
+													 oncomplete="PF('manageProductDialog').show()" update="dialogs"
+													 styleClass="rounded-button"></p:commandButton>
+								</div>
+								<div class="col">
+									<p:commandButton id="guardarId" value="Guardar"
+													 actionListener="#{billController.persistWorkOrder}"
+													 disabled="#{billController.responseWS.error != null ||  billController.responseWS.error eq '0'}"
+													 update="general:messages billForm:guardarId billForm:imprimirId"
+													 styleClass="rounded-button ui-button-danger"></p:commandButton>
+								</div>
+								<div class="col">
+									<p:commandButton id="imprimirId" value="Imprimir"
+													 actionListener="#{billController.generateBill}" ajax="false"
+													 styleClass="rounded-button ui-button-danger"></p:commandButton>
+								</div>
+							</div>
+						</div>
+						<br/>
+						<div class="card">
+							<h5>Detalle de factura</h5>
+							<p:dataTable id="detalleFacturaId" var="detalle" rowIndexVar="rowIndex"
+										 value="#{billController.bill.lstDetailBill}">
+
+								<p:column headerText="Fecha">
+									<h:outputText value="#{detalle.fecha}">
+										<f:convertDateTime pattern="dd-MM-yyyy"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Unidades">
+									<h:outputText value="#{detalle.unidades}"/>
+								</p:column>
+
+								<p:column headerText="Detalle">
+									<h:outputText value="#{detalle.descripcion}"
+												  onkeyup="this.value = this.value.toUpperCase();"/>
+								</p:column>
+
+								<p:column headerText="Valor Unitario">
+									<h:outputText value="#{detalle.valorUnitario}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="2"
+														 groupingUsed="false"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column id="cellValorTotalId" headerText="Valor Total">
+									<h:outputText value="#{detalle.subTotal}">
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="2"
+														 groupingUsed="false"/>
+									</h:outputText>
+								</p:column>
+
+								<p:column exportable="false">
+
+									<p:commandButton icon="pi pi-pencil"
+													 update=":dialogs"
+													 oncomplete="PF('manageProductDialog').show()"
+													 styleClass="edit-button rounded-button ui-button-success"
+													 actionListener="#{billController.editModeTrue('E')}"
+													 process="@this"
+													 rendered="#{detalle.tipo eq 'E'}">
+										<f:setPropertyActionListener value="#{detalle}"
+																	 target="#{billController.detailSelected_estampado}"/>
+										<p:resetInput target=":dialogs"/>
+									</p:commandButton>
+
+									<p:commandButton icon="pi pi-pencil"
+													 update=":dialogs"
+													 oncomplete="PF('manageProductDialog').show()"
+													 styleClass="edit-button rounded-button ui-button-success"
+													 actionListener="#{billController.editModeTrue('C')}"
+													 process="@this"
+													 rendered="#{detalle.tipo eq 'C'}">
+										<f:setPropertyActionListener value="#{detalle}"
+																	 target="#{billController.detailSelected_confecciones}"/>
+										<p:resetInput target=":dialogs"/>
+									</p:commandButton>
+
+									<p:commandButton icon="pi pi-pencil"
+													 update=":dialogs"
+													 oncomplete="PF('manageProductDialog').show()"
+													 styleClass="edit-button rounded-button ui-button-success"
+													 actionListener="#{billController.editModeTrue('B')}"
+													 process="@this"
+													 rendered="#{detalle.tipo eq 'B'}">
+										<f:setPropertyActionListener value="#{detalle}"
+																	 target="#{billController.detailSelected}"/>
+										<p:resetInput target=":dialogs"/>
+									</p:commandButton>
+
+									<p:commandButton icon="pi pi-trash"
+													 styleClass="edit-button rounded-button ui-button-secondary"
+													 actionListener="#{billController.deleteRow(rowIndex)}"
+													 update="billForm:detalleFacturaId billForm:total"
+													 process="@this">
+										<p:confirm header="Confirmation"
+												   message="¿Esta seguro de eliminar este detalle?"
+												   icon="pi pi-exclamation-triangle"/>
+									</p:commandButton>
+
+								</p:column>
+
+							</p:dataTable>
+						</div>
+						<br/>
+						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true"
+										 width="350">
+							<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+							<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"/>
+						</p:confirmDialog>
+
+						<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}"
+										 process="@this, billForm:identificacion"
+										 update=" billForm:nombres, billForm:fecha, billForm:direccion, billForm:telefono"/>
+					</h:form>
 				</div>
 			</div>
-			<br />
-			<div class="card">
-				<h5>Detalle de factura</h5>
-				<p:dataTable id="detalleFacturaId" var="detalle" rowIndexVar="rowIndex"
-					value="#{billController.bill.lstDetailBill}">
-
-					<p:column headerText="Fecha">
-						<h:outputText value="#{detalle.fecha}" >
-							<f:convertDateTime pattern="dd-MM-yyyy" />
-						</h:outputText>
-					</p:column>
-					
-					<p:column headerText="Unidades">
-						<h:outputText value="#{detalle.unidades}" />
-					</p:column>
-					
-					<p:column headerText="Detalle">
-						<h:outputText value="#{detalle.descripcion}"  onkeyup="this.value = this.value.toUpperCase();"/>
-					</p:column>
-					
-					<p:column headerText="Valor Unitario">
-						<h:outputText value="#{detalle.valorUnitario}" >
-							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" groupingUsed="false" />
-						</h:outputText>
-					</p:column>
-					
-					<p:column id="cellValorTotalId" headerText="Valor Total">
-						<h:outputText value="#{detalle.subTotal}" >
-							<f:convertNumber minFractionDigits="2" maxFractionDigits="2" groupingUsed="false" />
-						</h:outputText>
-					</p:column>
-
-					<p:column exportable="false">
-
-						<p:commandButton icon="pi pi-pencil"
-										 update=":dialogs"
-										 oncomplete="PF('manageProductDialog').show()"
-										 styleClass="edit-button rounded-button ui-button-success"
-										 actionListener="#{billController.editModeTrue('E')}"
-										 process="@this"
-										 rendered="#{detalle.tipo eq 'E'}">
-							<f:setPropertyActionListener value="#{detalle}"
-														 target="#{billController.detailSelected_estampado}" />
-							<p:resetInput target=":dialogs" />
-						</p:commandButton>
-
-						<p:commandButton icon="pi pi-pencil"
-										 update=":dialogs"
-										 oncomplete="PF('manageProductDialog').show()"
-										 styleClass="edit-button rounded-button ui-button-success"
-										 actionListener="#{billController.editModeTrue('C')}"
-										 process="@this"
-										 rendered="#{detalle.tipo eq 'C'}">
-							<f:setPropertyActionListener value="#{detalle}"
-														 target="#{billController.detailSelected_confecciones}" />
-							<p:resetInput target=":dialogs" />
-						</p:commandButton>
-
-						<p:commandButton icon="pi pi-pencil"
-							update=":dialogs"
-							oncomplete="PF('manageProductDialog').show()"
-							styleClass="edit-button rounded-button ui-button-success"
-							actionListener="#{billController.editModeTrue('B')}"
-							process="@this"
-							rendered="#{detalle.tipo eq 'B'}">
-							<f:setPropertyActionListener value="#{detalle}"
-								target="#{billController.detailSelected}" />
-							<p:resetInput target=":dialogs" />
-						</p:commandButton>
-
-						<p:commandButton icon="pi pi-trash"
-										 styleClass="edit-button rounded-button ui-button-secondary"
-										 actionListener="#{billController.deleteRow(rowIndex)}"
-										 update="billForm:detalleFacturaId billForm:total"
-										 process="@this">
-							<p:confirm header="Confirmation" message="¿Esta seguro de eliminar este detalle?" icon="pi pi-exclamation-triangle"/>
-						</p:commandButton>
-
-					</p:column>
-
-				</p:dataTable>
-			</div>
-			<br />
-			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
-				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-				<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" />
-			</p:confirmDialog>
-
-			<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}" process="@this, billForm:identificacion" update=" billForm:nombres, billForm:fecha, billForm:direccion, billForm:telefono"/>
-		</h:form>
+		</div>
         <script>
     PrimeFaces.locales['es'] = {
         closeText: 'Cerrar',
