@@ -1,27 +1,16 @@
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      lang="en">
-
-<h:head>
-    <title><ui:insert name="title">CJCONFECCIONES</ui:insert></title>
-</h:head>
-
-<h:body >
-    <div class="card">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
         <h:form id="general">
             <p:growl id="messages" showDetail="true" showSummary="true"/>
-            <p:menubar>
-                <p:menuitem value="Home" icon="pi pi-fw pi-th-large" outcome="/landingPage.xhtml"/>
-                <p:menuitem value="Generar Factura" icon="pi pi-fw pi-plus" outcome="/documentation/bill.xhtml"/>
-				<p:menuitem value="Listar Pedidos" icon="pi pi-fw pi-plus" outcome="/documentation/listOrder.xhtml"/>
-            </p:menubar>
+            <p:panelMenu style="width:100%; border:none;">
+                <p:submenu label="Navegación" icon="pi pi-home">
+                    <p:menuitem value="Home" icon="pi pi-fw pi-th-large" outcome="/landingPage.xhtml"/>
+                    <p:menuitem value="Generar Factura" icon="pi pi-fw pi-plus" outcome="/documentation/bill.xhtml"/>
+                    <p:menuitem value="Listar Pedidos" icon="pi pi-fw pi-plus" outcome="/documentation/listOrder.xhtml"/>
+                </p:submenu>
+            </p:panelMenu>
         </h:form>
-    </div>
-</h:body>
-
-</html>
+</ui:composition>

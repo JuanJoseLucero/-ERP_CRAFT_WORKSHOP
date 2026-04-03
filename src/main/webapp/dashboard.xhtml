@@ -18,10 +18,21 @@
 </h:head>
 
 <h:body >
-    <div class="container mt-4">
-        <h1>CJCONFECCIONES SYSTEM CUSTOM</h1>
-        <ui:include src="/navegability/menu.xhtml"/>
-        <ui:insert name="content"/>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- SIDEBAR -->
+            <div class="col-12 col-md-3 col-lg-2" style="min-height: 100vh; background-color: #2c3e50;">
+                <ui:include src="/navegability/menu.xhtml"/>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="col">
+                <div class="p-4">
+                    <h2>CJCONFECCIONES SYSTEM CUSTOM</h2>
+                    <ui:insert name="content"/>
+                </div>
+            </div>
+        </div>
     </div>
 </h:body>
 
