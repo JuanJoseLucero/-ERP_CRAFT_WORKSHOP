@@ -426,8 +426,10 @@ public class BillController implements Serializable{
 	public void generateBill() {
 		try {
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy"); // Customize the date format as needed
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	        String dateString = dateFormat.format(bill.getFechaDate());
+	        SimpleDateFormat dateFormatFile = new SimpleDateFormat("yyyyMMdd");
+	        String dateFileString = dateFormatFile.format(bill.getFechaDate());
 			Map<String, Object> parametros = new HashMap<String, Object>();
 			parametros.put("identification", bill.getIdentificacion());
 			parametros.put("name", bill.getNombres());
@@ -447,7 +449,7 @@ public class BillController implements Serializable{
 			//parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(lstDetailBill));
 			parametros.put("ds",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(bill.getLstDetailBill()));
 			parametros.put("dsAbono",new  net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(bill.getLstAbonos()));
-			String billName = "BillNewMethod.pdf";
+			String billName = bill.getNombres().replaceAll("\\s+", "_") + "_" + dateFileString + "_" + bill.getTotal() + ".pdf";
 			generateReport.generateReport(billName, "/home/jlucero/JaspersoftWorkspace/MyReports/BillPrintCJ.jasper", parametros);
 		}catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR TO GENERATE FROM BILLCONTROLLER REPORT ",e);
