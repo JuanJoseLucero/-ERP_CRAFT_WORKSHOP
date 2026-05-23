@@ -43,14 +43,17 @@ public class ApiRestClient implements Serializable{
 		String url = propiedades.getOrderProperties("apiCore");
 		url = url.concat(resource);
 		T response = null;
-		/*
-		HttpHost proxy = new HttpHost("192.168.18.20", 8082);
+
+		//HttpHost proxy = new HttpHost("192.168.18.20", 8082);
+		HttpHost proxy = new HttpHost("192.168.0.8", 8082);
+
 		RequestConfig config = RequestConfig.custom()
 				.setProxy(proxy)
-				.build();*/
-//		try (CloseableHttpClient httpClient = HttpClients.custom()
-//				.setDefaultRequestConfig(config).build()){
-		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+				.build();
+		try (CloseableHttpClient httpClient = HttpClients.custom()
+				.setDefaultRequestConfig(config).build()){
+
+//		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 			HttpPost httpPost = new HttpPost(url);
 			httpPost.setHeader("Content-Type", "application/json; charset=UTF-8");
 			httpPost.setEntity(new StringEntity(json, "UTF-8"));

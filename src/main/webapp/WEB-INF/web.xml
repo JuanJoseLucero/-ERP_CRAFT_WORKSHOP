@@ -10,7 +10,7 @@
 		<url-pattern>/rest/*</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
+		<welcome-file>dashboard.jsf</welcome-file>
 	</welcome-file-list>
 
 	<servlet>
@@ -20,7 +20,7 @@
 
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.xhtml</url-pattern>
+		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	<context-param>
 		<param-name>primefaces.DECIMAL_SEPARATOR</param-name>
@@ -65,8 +65,4 @@
 	<security-role>
 		<role-name>SimpleUser</role-name>
 	</security-role>
-
-
-
-
 </web-app>

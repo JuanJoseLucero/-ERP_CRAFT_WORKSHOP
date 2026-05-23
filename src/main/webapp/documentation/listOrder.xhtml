@@ -72,6 +72,10 @@
 												value="#{order.estado eq 'A' ? 'ABIERTO': order.estado eq 'AB' ? 'ABONADO':'PAGADO'}"/>
 									</p:column>
 
+									<p:column headerText="Estado Confección" filterBy="#{order.estadoconfeccion}" filterMatchMode="contains">
+										<h:outputText value="#{order.estadoconfeccion}"/>
+									</p:column>
+
 									<p:column headerText="Acciones" style="width: 120px; text-align:center;"
 											  exportable="false">
 										<div class="d-flex gap-2">
