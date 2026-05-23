@@ -37,7 +37,7 @@ public class ListOrderController implements Serializable{
 	@Inject
 	private Util util;
 	Logger log = Logger.getLogger(ListOrderController.class.getName());
-	private  ListOrder orders;
+	private ListOrder orders;
 	private ListAbono lstAbonoSelects;
 	private Abono abonoSelected;
 	private Order orderSelected;
@@ -48,6 +48,7 @@ public class ListOrderController implements Serializable{
 	private Date ffin;
 
 	private String msgAlert;
+	private List<EstadoPedido> lstEstados;
 
 	@PostConstruct
 	public void init() {
@@ -196,16 +197,33 @@ public class ListOrderController implements Serializable{
 			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
 			jsonBuilder.add("finicial", sdf.format(finicio));
 			jsonBuilder.add("ffinal", sdf.format(ffin));
-			orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders4date", jsonBuilder.build().toString());
-			if(orders.getPedidos().isEmpty()){
-				msgAlert="NO SE HAN ENCONTRADO PEDIDOS PARA ESE RANGO DE FECHAS";
-				PrimeFaces.current().ajax().update("notificationId");
-				PrimeFaces.current().executeScript("PF('notificacionDlg').show()");
-			}
-			log.info(orders.getPedidos().size()+"");
-			PrimeFaces.current().ajax().update("billForm:ordersIdTable");
+		orders = apiRestClient.consumeWebServices(ListOrder.class, "order/getOrders4date", jsonBuilder.build().toString());
+		if(orders.getPedidos().isEmpty()){
+			msgAlert="NO SE HAN ENCONTRADO PEDIDOS PARA ESE RANGO DE FECHAS";
+			PrimeFaces.current().ajax().update("notificationId");
+			PrimeFaces.current().executeScript("PF('notificacionDlg').show()");
+		}
+		lstEstados = orders.getLstEstados();
+		log.info(orders.getPedidos().size()+"");
+		PrimeFaces.current().ajax().update("billForm:ordersIdTable");
 		}catch (Exception e){
 			log.log(Level.SEVERE, "ERROR TO FILTER ",e);
+		}
+	}
+
+	public void cambiarEstadoConfeccion(Order order) {
+		try {
+			JsonObjectBuilder jsonBuilder = Json.createObjectBuilder();
+			jsonBuilder.add("pedidoId", String.valueOf(order.getId()));
+			jsonBuilder.add("estadoId", String.valueOf(order.getEstadoconfeccionId()));
+			jsonBuilder.add("usuario", "SISTEMA");
+			ResponseCJ response = apiRestClient.consumeWebServices(ResponseCJ.class, "order/cambiarEstadoConfeccion", jsonBuilder.build().toString());
+			if ("0".equals(response.getError())) {
+				FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "Estado actualizado"));
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR AL CAMBIAR ESTADO CONFECCION", e);
 		}
 	}
 
@@ -287,5 +305,13 @@ public class ListOrderController implements Serializable{
 
 	public void setMsgAlert(String msgAlert) {
 		this.msgAlert = msgAlert;
+	}
+
+	public List<EstadoPedido> getLstEstados() {
+		return lstEstados;
+	}
+
+	public void setLstEstados(List<EstadoPedido> lstEstados) {
+		this.lstEstados = lstEstados;
 	}
 }

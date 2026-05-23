@@ -24,4 +24,5 @@ public class Order {
 	private String freal;
 	private String estado;
 	private String estadoconfeccion;
+	private Integer estadoconfeccionId;
 }

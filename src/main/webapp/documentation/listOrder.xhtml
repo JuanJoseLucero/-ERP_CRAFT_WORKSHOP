@@ -72,8 +72,11 @@
 												value="#{order.estado eq 'A' ? 'ABIERTO': order.estado eq 'AB' ? 'ABONADO':'PAGADO'}"/>
 									</p:column>
 
-									<p:column headerText="Estado Confección" filterBy="#{order.estadoconfeccion}" filterMatchMode="contains">
-										<h:outputText value="#{order.estadoconfeccion}"/>
+									<p:column headerText="Estado Confección">
+										<p:selectOneMenu value="#{order.estadoconfeccionId}" style="width:100%">
+											<f:selectItems value="#{listOrderController.lstEstados}" var="estado" itemLabel="#{estado.nombre}" itemValue="#{estado.id}"/>
+											<p:ajax process="@this" update="@parent" listener="#{listOrderController.cambiarEstadoConfeccion(order)}"/>
+										</p:selectOneMenu>
 									</p:column>
 
 									<p:column headerText="Acciones" style="width: 120px; text-align:center;"
