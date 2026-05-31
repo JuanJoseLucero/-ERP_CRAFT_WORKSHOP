@@ -33,7 +33,7 @@
 													onkeyup="this.value = this.value.toUpperCase();">
 										<p:ajax event="itemSelect"
 												listener="#{billController.onItemSelect}"
-												update="billForm:identificacion billForm:direccion billForm:telefono"/>
+												update="billForm:identificacion billForm:direccion billForm:telefono billForm:email"/>
 									</p:autoComplete>
 
 									<p:outputLabel for="fecha" value="Fecha de Entrega:"/>
@@ -178,7 +178,7 @@
 						<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true"
 										 width="350">
 							<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
-							<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes"/>
+							<p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes"/>
 						</p:confirmDialog>
 
 						<p:remoteCommand name="searchClient" actionListener="#{billController.searchClient()}"
@@ -264,7 +264,9 @@
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">
 										<p:commandButton id="btnLimpiarEstampado" value="Limpiar" styleClass="ui-button-danger"
-														 actionListener="#{billController.cleanDialog()}" />
+														 actionListener="#{billController.cleanDialog()}" process="@this">
+															<p:confirm header="Confirmación" message="¿Está seguro de limpiar los campos?" icon="pi pi-exclamation-triangle"/>
+														</p:commandButton>
 									</p:column>
 									<p:column styleClass="ui-grid-col-4">
 
@@ -318,7 +320,9 @@
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">
 										<p:commandButton id="btnLimpiarConfeccion" value="Limpiar" styleClass="ui-button-danger"
-														 actionListener="#{billController.cleanDialog()}" />
+														 actionListener="#{billController.cleanDialog()}" process="@this">
+															<p:confirm header="Confirmación" message="¿Está seguro de limpiar los campos?" icon="pi pi-exclamation-triangle"/>
+														</p:commandButton>
 									</p:column>
 									<p:column styleClass="ui-grid-col-4">
 
@@ -387,7 +391,9 @@
 								<p:row>
 									<p:column styleClass="ui-grid-col-4">
 										<p:commandButton id="btnLimpiar" value="Limpiar" styleClass="ui-button-danger"
-														 actionListener="#{billController.cleanDialog()}" />
+														 actionListener="#{billController.cleanDialog()}" process="@this">
+															<p:confirm header="Confirmación" message="¿Está seguro de limpiar los campos?" icon="pi pi-exclamation-triangle"/>
+														</p:commandButton>
 									</p:column>
 									<p:column styleClass="ui-grid-col-4">
 

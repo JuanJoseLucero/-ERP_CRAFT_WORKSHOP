@@ -102,6 +102,7 @@ public class BillController implements Serializable{
 								.nombres(persona.getString("nombre"))
 								.direccion(persona.getString("direccion"))
 								.telefono(persona.getString("telefono"))
+								.email(persona.getString("email"))
 								.lstDetailBill(new ArrayList<>())
 								.total(BigDecimal.ZERO).build())
 						.collect(Collectors.toList());
@@ -119,6 +120,7 @@ public class BillController implements Serializable{
 		bill.setNombres(billAutocomplete.getNombres());
 		bill.setDireccion(billAutocomplete.getDireccion());
 		bill.setTelefono(billAutocomplete.getTelefono());
+		bill.setEmail(billAutocomplete.getEmail());
 	}
 
 	public void automaticCalculation() {
