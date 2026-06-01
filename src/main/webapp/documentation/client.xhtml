@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="../dashboard.xhtml">
+
+    <ui:define name="content">
+        <h:form id="clientForm">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-12 col-lg-12">
+
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <div class="row align-items-end g-2 mb-3">
+                                    <div class="col-12 col-md-auto">
+                                        <p:commandButton value="Nuevo Cliente" icon="pi pi-plus"
+                                            actionListener="#{listClientController.nuevo()}"
+                                            class="btn btn-success w-100" update="general:messages"/>
+                                    </div>
+                                </div>
+
+                                <p:dataTable id="clientesIdTable" var="cli"
+                                    value="#{listClientController.clientes}"
+                                    paginator="true" rows="10"
+                                    paginatorPosition="bottom"
+                                    emptyMessage="No hay clientes registrados"
+                                    style="table-layout: fixed; width:100%;">
+
+                                    <p:column headerText="Cédula" sortBy="#{cli.cedula}"
+                                        filterBy="#{cli.cedula}" filterMatchMode="contains">
+                                        <h:outputText value="#{cli.cedula}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Nombre" sortBy="#{cli.nombre}"
+                                        filterBy="#{cli.nombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{cli.nombre}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Teléfono">
+                                        <h:outputText value="#{cli.telefono}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Dirección">
+                                        <h:outputText value="#{cli.direccion}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Email">
+                                        <h:outputText value="#{cli.email}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Acciones" style="width:120px; text-align:center;"
+                                        exportable="false">
+                                        <div class="d-flex gap-2">
+                                            <p:commandButton icon="pi pi-pencil"
+                                                actionListener="#{listClientController.editar(cli.cedula)}"
+                                                process="@this"/>
+                                            <p:commandButton icon="pi pi-trash"
+                                                styleClass="ui-button-secondary"
+                                                actionListener="#{listClientController.eliminar(cli.cedula)}"
+                                                update="general:messages clientesIdTable">
+                                                <p:confirm header="Confirmación"
+                                                    message="¿Está seguro de eliminar este cliente?"
+                                                    icon="pi pi-exclamation-triangle"/>
+                                            </p:commandButton>
+                                        </div>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <p:dialog header="Mantenimiento de Cliente" widgetVar="clientDialog"
+            modal="true" width="500" showEffect="fade" responsive="true">
+            <h:form id="clientDialogForm">
+                <p:panelGrid id="clientDialogContent" columns="2" style="width:100%;">
+                    <h:outputText value="Cédula *"/>
+                    <p:inputText id="cedulaId" value="#{listClientController.selectedCliente.cedula}"
+                        required="true" style="width:100%;"/>
+
+                    <h:outputText value="Nombre *"/>
+                    <p:inputText id="nombreId" value="#{listClientController.selectedCliente.nombre}"
+                        required="true" style="width:100%;"/>
+
+                    <h:outputText value="Teléfono"/>
+                    <p:inputText id="telefonoId" value="#{listClientController.selectedCliente.telefono}"
+                        style="width:100%;"/>
+
+                    <h:outputText value="Dirección"/>
+                    <p:inputText id="direccionId" value="#{listClientController.selectedCliente.direccion}"
+                        style="width:100%;"/>
+
+                    <h:outputText value="Email"/>
+                    <p:inputText id="emailId" value="#{listClientController.selectedCliente.email}"
+                        style="width:100%;"/>
+                </p:panelGrid>
+
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <p:commandButton value="Guardar" icon="pi pi-check"
+                        actionListener="#{listClientController.guardar()}"
+                        update="clientDialogContent general:messages"/>
+                    <p:commandButton value="Cancelar" type="button" icon="pi pi-times"
+                        onclick="PF('clientDialog').hide()"/>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350">
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-flat"/>
+            <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes"/>
+        </p:confirmDialog>
+
+    </ui:define>
+</ui:composition>
